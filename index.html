@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="ie=edge">
+		<title>PAD Editor “筑前煮”</title>
+		<link rel="stylesheet" href="./css/pad.css" type="text/css">
+		<script src="./js/createblock.js" defer async></script>
+		<script src="./js/editblock.js" defer async></script>
+		<script src="./js/runpad.js" defer async></script>
+		<script src="./js/saveload.js" defer async></script>
+		<script src="./js/updateblocks.js" defer async></script>
+		<script src="./js/padio.js" defer async></script>
+		<link rel="shortcut icon" src="./favicon.ico" type="image/vnd.microsoft.icon">
+	</head>
+
+	<body>
+		<h1>PAD Editor “筑前煮”</h1>
+		<span class="tt i" style="text-decoration: underline;">MKNPAD Chikuzen-ni (0.03.01.200119.ααα) since 2019-11-15</span>
+		<p>
+			PAD Editor (MKNPAD) は現在開発中です。
+			機能の一部は予告なしに変更される恐れがあります。
+			<strong>Internet Explorer と Microsoft Edge (EdgeHTML) では一部、もしくは全部の機能が利用できません。</strong>
+		</p>
+		<hr>
+		<input type="hidden" id="blktype">
+		<div class="BlockPalette">
+			<label class="BlockPaletteItem">
+				<input type="radio" name="mode" onclick="document.getElementById('blktype').value = 'normal'">
+				<div class="CmdBlk_"><code>normal</code></div>
+			</label>
+			<label class="BlockPaletteItem">
+				<input type="radio" name="mode" onclick="document.getElementById('blktype').value = 'while'">
+				<div class="WhlBlk_"><code>&nbsp;while</code></div>
+			</label>
+			<label class="BlockPaletteItem">
+				<input type="radio" name="mode" onclick="document.getElementById('blktype').value = 'until'">
+				<div class="DowBlk_"><code>until&nbsp;</code></div>
+			</label>
+			<label class="BlockPaletteItem">
+				<input type="radio" name="mode" onclick="document.getElementById('blktype').value = 'if'">
+				<div class="IfBlk_"><code>if&nbsp;&nbsp;</code></div>
+			</label>
+			<label class="BlockPaletteItem">
+				<input type="radio" name="mode" onclick="document.getElementById('blktype').value = 'function'">
+				<div class="FncBlk_"><code>function</code></div>
+			</label>
+			<label class="BlockPaletteItem">
+				<input type="radio" name="mode" onclick="document.getElementById('blktype').value = 'comment'">
+				<div class="CmtBlk_"><code>comment</code></div>
+			</label>
+		</div>
+		<div class="PAD" id="PAD">
+			<div class="PADTitle">TEST</div><br>
+			<div class="BlkBlk Main" id="MAIN">
+				<div class="FlgBlk Start">Start</div><br>
+				<div class="EmpBlk"></div><br>
+				<div class="FlgBlk End">End</div><br>
+			</div>
+		</div>
+
+		<button onclick="PADStart();" title="Run"><img src="./img/run.svg" alt="Run"></button>
+		<button onclick="SavePAD2File();" title="Save as file"><img src="./img/save.svg" alt="Save"></button>
+		<button onclick="LoadPADfromFile();" title="Open"><img src="./img/open.svg" alt="Open"></button>
+		<button onclick="location.reload(false);" title="Clear"><img src="./img/clear.svg" alt="Clear"></button>
+		<button onclick="document.getElementById('PadOutput').textContent = Pad2Text();" title="Convert PAD to Text"><img
+				src="./img/pad2txt.png" alt="PAD2Text"></button>
+		<button onclick="document.getElementById('PadOutput').textContent = '';" title="Clear Output"><img
+				src="./img/cls.png" alt="cls"></button>
+		<button onclick="GetLibrary();" title="Library"><img src="./img/library.png" alt="Library"></button>
+		<button onclick="Text2Pad(prompt('テキスト形式に変換された PAD のデータを入力してください'));" title="Convert Text to PAD"><img
+				src="./img/txt2pad.png" alt="Text2PAD"></button>
+		<h2>実行結果</h2>
+		<div id="PadOutput" class="tt" style="user-select: all;"></div>
+		<h2>エラー情報</h2>
+		<div id="cmdlin" class="tt"></div>
+		<hr>
+		<footer>
+			<div>
+				[<a href="./PadEditor.pdf">コマンドリファレンス</a>]
+			</div>
+			<div style="text-align: center;">
+				<small>
+					Copyright © 2019 KusaReMKN.
+					<a href="./PadEditor.pdf">諸条件</a>と <a href="https://www.kusaremkn.tk/mknppl.html">MKNPPL</a> の下で利用できます。
+				</small>
+			</div>
+		</footer>
+		<style>
+			.MigiMenu {
+				display: none;
+				position: absolute;
+
+				background-color: whitesmoke;
+
+				padding: 1ch 1em;
+
+				font-size: x-small;
+
+				border: solid 1px gray;
+				border-radius: 1ch;
+				filter: drop-shadow(2px 2px 1px gray);
+			}
+
+			.MenuItem {
+				border-radius: 2px;
+				min-width: 8em;
+				margin: auto;
+			}
+
+		</style>
+		<!-- 【筑前煮】独自メニュー -->
+		<div class="MigiMenu" id="MigiMenu">
+			<div id="copyit" class="MenuItem">Copy (Unimplemented)</div>
+			<div id="cutit" class="MenuItem">Cut (Unimplemented)</div>
+			<div id="deleteit" class="MenuItem">Delete</div>
+		</div>
+		<script>
+			let MenuItems = document.getElementsByClassName('MenuItem');
+			for (let i = 0; i < MenuItems.length; i++) {
+				MenuItems[i].onmouseover = function () {
+					this.style.background = 'lightblue';
+				}
+				MenuItems[i].onmouseleave = function () {
+					this.style.background = 'none';
+				}
+			}
+		</script>
+	</body>
+
+</html>

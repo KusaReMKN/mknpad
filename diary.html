@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="ie=edge">
+		<title>Pad Editor α</title>
+		<link rel="shortcut icon" src="/favicon.ico" type="image/vnd.microsoft.icon">
+		<link rel="icon"
+			src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAAEzo7pQAAAAMFBMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACZAAD/mcz///84/nFvAAAAu0lEQVR42r2SzQ7DIAyDv2SVdmp4/8esjzusO8BYoT9o0rRUqCU4dexgs8PtcQcIclgCppVt2OzNnvB3QT2qHxU62dpmzBECsMKmPYXNtGQddek16gogmif5VhCANTvQmMVSl9ghxonORmQhCER+Y9lHRelX/T8Snl1SNcyL8GLFctB6dLT8QJzN/jwYxeWcvgQMox8jvU4HpOMFKjfjvD5dNinSR0XE4b0cyIzlDCDl8lhGMtEfZjEEvAAEDSudW8wrIgAAAABJRU5ErkJggg=="
+			type="image/png" sizes="32x32">
+	</head>
+
+	<body>
+		<h1>開発日記(?)</h1>
+		<section>
+			<h3>2019-11-15</h3>
+			<p>
+				製作開始。
+				一般命令を各ブロックの追加、編集、および削除ができるようになった。
+			</p>
+			<h3>使い方！</h3>
+			<ul>
+				<li>薄い点線の中をクリックするとダイアログが出てくるよ！</li>
+				<li>命令を入れてね！</li>
+				<li>命令ブロックができるよ！</li>
+				<li>命令ブロックをクリックすると編集できるよ！</li>
+				<li>編集するときに中身を空にすると命令ブロックが消えるよ！</li>
+			</ul>
+		</section>
+		<section>
+			<h3>2019-11-16</h3>
+			<p>
+				ネスト構造をすっかり忘れてて完全に詰んでる。
+				while は表示されてるけど入力できないよ。
+				これも終わってる。
+			</p>
+		</section>
+		<section>
+			<h3>2019-11-17</h3>
+			<p>
+				インデント 8em じゃ深すぎかなぁ(白目) とか思ったので半分にした。
+			</p>
+		</section>
+		<section>
+			<h3>2019-11-18</h3>
+			<p>
+				幅がそれっぽくなるようにした。
+				色つけたらかわいくなった。
+			</p>
+		</section>
+		<section>
+			<h3>2019-11-20</h3>
+			<p>
+				インデントの癖がなくなってそれっぽくなった。
+				睡眠はやっぱり大事だ。
+				バージョンの表示非表示を切り替えられるようになった。
+				影とかいろいろついて強そうになった。
+			</p>
+		</section>
+		<section>
+			<h3>2019-11-23</h3>
+			<p>
+				適当な実行機能をつけた。
+				<b>これは一時的なものである</b>。
+			</p>
+		</section>
+		<section>
+			<h3>2019-11-24</h3>
+			<p>
+				適当な実行機能を改善。
+			</p>
+		</section>
+		<section>
+			<h3>2019-11-25</h3>
+			<p>
+				While の実装。
+				配置はできない。
+			</p>
+		</section>
+		<section>
+			<h3>2019-11-26</h3>
+			<p>
+				While と until が置けるようになった。
+				if が解釈できるようになった。
+			</p>
+		</section>
+		<section>
+			<h3>2019-11-27</h3>
+			<p>
+				配列とポインタもどきが実装された。
+			</p>
+			<p>
+				ブロックのパレットができた。
+				結構実行できることに気付いた。
+				楽しかった。
+			</p>
+		</section>
+		<section>
+			<h3>2019-11-28</h3>
+			<p>
+				処理がとても早くなった。
+				innerText を使うとバカくそ遅くなるから気を付けようね！
+			</p>
+			<p>
+				文書をちょっとだけまともにした？
+			</p>
+		</section>
+		<section>
+			<h3>2019-11-29</h3>
+			<p>
+				局所変数やグローバル変数という概念が向こうからやってきた。
+			</p>
+			<p>
+				コメントを追加。
+				局所変数に欠陥がありすぎて無限ループとメモリモリモリ事件が発生したのでそんなものはなくなった。
+			</p>
+		</section>
+		<section>
+			<h3>2019-11-30</h3>
+			<p>
+				<code>SETA</code> の仕様変更: ポインタに対しては長さのチェックを行わない。
+			</p>
+			<p>
+				ライブラリからロード機能を追加。
+				下のほうにあるボタンにライブラリ名を入れて PadIt することでライブラリにある PAD データを一瞬でロードできる。
+				現時点で利用可能なライブラリ名:
+				OddEvenSort, SelectionSort.
+			</p>
+		</section>
+		<section>
+			<h3>2019-12-01</h3>
+			<p>
+				新コマンド <code>PRINTA</code> 追加。
+				書式は <code>PRINTA v [n]</code>。
+				配列 <code>v</code> の要素をすべて、もしくは <code>n</code> 個表示。
+				<code>v</code> がポインタの場合は <code>n</code> は必須。
+			</p>
+		</section>
+		<section>
+			<h3>2019-12-02</h3>
+			<p>
+				メモリモリモリ事件の犯人が大体実行済みコマンド一覧であったことが明らかになったため、コマンド一覧は懲戒免職を受けた。
+				これによって全体的な実行速度が格段に向上したほか、メモリ利用量も改善した。
+				これで無限ループによるメモリ爆発はおこらなくなったはずである。
+			</p>
+			<p>
+				ライブラリに追加: InsertionSort。
+			</p>
+			<p>
+				新コマンド <code>SWAPA</code> 追加。
+				書式: <code>SWAPA v n m</code>。
+				配列 <code>v</code> のインデクス <code>n</code>, <code>m</code> 番目の要素を入れ替える。
+				異なる配列間の要素を入れ替えるには <code>GETA</code> を利用して要素のインデクスを取得したのちに <code>MEMORY</code> に対して本コマンドを利用するなどできる。
+			</p>
+		</section>
+		<section>
+			<h3>2019-12-03</h3>
+			<p>
+				新コマンド <code>PUSH</code>, <code>POP</code> 追加。
+				書式: <code>PUSH x</code>; <code>POP a</code>。
+				<code>PUSH</code> コマンドを用いてスタックに値を積み込みます。
+				<code>POP</code> コマンドを利用してスタックから値を取り出します。
+			</p>
+		</section>
+		<section>
+			<h3>2019-12-04</h3>
+			<p>
+				一部の変数名を利用するとシステム全体が不安定になる問題を修正。
+			</p>
+			<p>
+				条件式を要求するブロックを選択時に条件コマンド以外のコマンドを入力されると通常ブロックに自動的に切り替わるようになった。
+				これは(現時点では)内部的に切り替わるだけであって、ラジオボックスの値は切り替わらない。
+			</p>
+			<p>
+				条件式にのみ <code>$</code> から始まる <code>$ i == 0</code> のような構文が理解できるようになった。
+				これ以降でも <code>$</code> から始まるコマンドは “自然な” 式を理解するコマンドとして利用できるようになるかもしれない。
+			</p>
+			<p>
+				ライブラリ OddEvenSort, SelectionSort を新構文を利用した形式に書き直しました。
+				InsertionSort にバグがあるようです。
+			</p>
+		</section>
+		<section>
+			<h3>2019-12-05</h3>
+			<p>
+				<code>$</code> から始まるコマンドブロックをサポート。
+				単純代入(<code>=</code>, <code>&lt;-</code>)、演算代入(<code>+=</code>, <code>*=</code>, <code>&=</code>,
+				etc)とスワップ(<code>&lt;=&gt;</code>)が利用可能になりました。
+				単項増減分演算子(<code>++</code>, <code>--</code>)が利用可能になりました。
+				それぞれの演算子と演算項はスペースで分けてください(ex. <code>$ i = 0</code>, <code>$ a &lt;&lt;= 3</code>, <code>$ i ++</code>, etc)。
+			</p>
+		</section>
+		<section>
+			<h3>2019-12-06</h3>
+			<p>
+				Favicon を追加。
+				ごみのような出来栄え。
+			</p>
+			<p>
+				さりげなしにコメントブロックのデザイン変更。
+			</p>
+			<p>
+				新コマンド <code>BREAK</code> を追加。
+				ループ内で利用する場合はループを脱出する <code>break</code> と同様の機能。
+				ループ外で利用する場合(ルート直下やルート直下に配置された if など)はプログラムを脱出する。
+			</p>
+			<p>
+				新コマンド <code>CONTINUE</code> を追加。
+				ループ内で利用する場合は <code>continue</code> と同様の機能。
+				ループ外に利用する場合はプログラムを脱出する。
+			</p>
+			<p>
+				新コマンド <code>INPUT</code> を追加。
+				書式は <code>INPUT a [b [...]]</code>。
+				入力がキャンセルされるとシステム変数 <code>RETURN</code> にシステム定数 <code>EOF</code> が代入されます。
+			</p>
+			<p>
+				システム変数 <code>RETURN</code> を追加。
+				これには直前に実行したコマンド(や将来的には追加されるかもしれない関数)の返り値が格納されます。
+			</p>
+			<p>
+				システム定数 <code>EOF</code> を追加。
+				入力機能のエラーや中断時に返却されます。
+			</p>
+			<p>
+				テューリング完全性の確認作業が完了。
+				新ライブラリ: Rule110。
+			</p>
+		</section>
+	</body>
+
+</html>

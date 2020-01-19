@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="32" height="24" viewbox="0 0 32 24">
+	<title>Clear</title>
+	<g stroke="black">
+		<line x1="10" y1="6" x2="13" y2="9" />
+		<line x1="16" y1="4" x2="16" y2="8" />
+		<line x1="22" y1="6" x2="19" y2="9" />
+		<line x1="24" y1="12" x2="20" y2="12" />
+		
+		<line x1="22" y1="18" x2="19" y2="15" />
+		<line x1="16" y1="20" x2="16" y2="16" />
+		<line x1="10" y1="18" x2="13" y2="15" />
+		<line x1="8" y1="12" x2="12" y2="12" />
+	</g>
+</svg>
