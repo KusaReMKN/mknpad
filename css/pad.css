@@ -43,6 +43,7 @@ code {
 	background-color: lavender;
 }
 
+/* ブロックパレット */
 .BlockPalette {
 	position: sticky;
 	display: block;
@@ -57,13 +58,34 @@ code {
 
 	filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, .6));
 }
-
+/* ブロックパレットのアイテム */
 .BlockPaletteItem {
 	position: relative;
 
 	margin: auto 2rem;
 	
 	white-space: nowrap;
+}
+
+/* 独自右メニューのやつら */
+.MigiMenu {
+	display: none;
+	position: absolute;
+
+	background-color: whitesmoke;
+
+	padding: 1ch 1em;
+
+	font-size: x-small;
+
+	border: solid 1px gray;
+	border-radius: 1ch;
+	filter: drop-shadow(2px 2px 1px gray);
+}
+.MenuItem {
+	border-radius: 2px;
+	min-width: 8em;
+	margin: auto;
 }
 
 /* ブロック { } の箱 */
