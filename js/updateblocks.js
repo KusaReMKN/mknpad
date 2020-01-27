@@ -67,7 +67,14 @@ function ClickRight(e) {
 		let MigiMenu = document.getElementById('MigiMenu');
 		MigiMenu.style.display = 'none';
 	};
+	document.getElementById('editit').onclick = function () {
+		BlockSelected = false;
+		let MigiMenu = document.getElementById('MigiMenu');
+		MigiMenu.style.display = 'none';
 
+		let evt = new MouseEvent("dblclick", { bubbles: true, cancelable: true, view: window });
+		foo.dispatchEvent(evt);
+	};
 	return false;
 }
 
