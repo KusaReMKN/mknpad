@@ -20,6 +20,10 @@ body {
 	font-family: 'Ubuntu Mono', 'Consolas', 'Courier New', Courier, monospace;
 }
 
+.pre {
+	white-space: pre-wrap;
+}
+
 code {
 	font-family: 'Ubuntu Mono', 'Consolas', 'Courier New', Courier, monospace;
 	white-space: pre-wrap;
