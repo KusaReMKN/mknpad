@@ -77,7 +77,7 @@ code {
 
 	background-color: whitesmoke;
 
-	padding: 1ch 1em;
+	padding: 1ch 1ch;
 
 	font-size: x-small;
 
@@ -88,7 +88,13 @@ code {
 .MenuItem {
 	border-radius: 2px;
 	min-width: 8em;
-	margin: auto;
+	padding-left: 1ch;
+	padding-right: 1ch;
+	background-color: none;
+	transition: all 150ms ease 0ms;
+}
+.MenuItem:hover {
+	background-color: lightblue;
 }
 
 /* ブロック { } の箱 */
