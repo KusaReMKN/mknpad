@@ -9,4 +9,4 @@ window.addEventListener('load', function () {
 		}
 	}
 }
-
+);
