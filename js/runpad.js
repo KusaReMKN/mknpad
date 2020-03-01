@@ -203,14 +203,14 @@ function RunPAD(PAD, n = 0) {
 
 		function atCommand(Command) {
 			if (Command[0] === '@import') {
-				alert('@import は未実装です');
+				PrintErr('@import は未実装です このコマンドは無視されます\n');
 				return 0;
 			}
 			if (Command[0] === '@option') {
-				alert('@option は未実装です');
+				PrintErr('@option は未実装です このコマンドは無視されます\n');
 				return 0;
 			}
-			alert('未知の @ コマンドです: ' + Command[0]);
+			PrintErr('未知の @ コマンドです: ' + Command[0] + ' このコマンドは無視されます');
 			return -1;
 		}
 
