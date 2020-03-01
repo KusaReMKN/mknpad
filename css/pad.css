@@ -1,23 +1,22 @@
-@import url('https://fonts.googleapis.com/css?family=M+PLUS+Rounded+1c:300,500,700&display=swap&subset=cyrillic,cyrillic-ext,greek,greek-ext,hebrew,japanese,latin-ext,vietnamese');
-@import url('https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,400i&display=swap&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext');
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans+JP:400,700|Roboto+Mono&display=swap&subset=japanese,latin-ext');
 
 * {
 	box-sizing: border-box;
 }
 
 body {
-	font-family: 'M PLUS Rounded 1c', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+	font-family: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 	user-select: none;
 }
 
 .PAD {
-	font-family: 'Ubuntu Mono', monospace;
+	font-family: 'Roboto Mono', 'Ubuntu Mono', monospace;
 	overflow-x: scroll;
 	white-space: nowrap;
 }
 
 .tt {
-	font-family: 'Ubuntu Mono', 'Consolas', 'Courier New', Courier, monospace;
+	font-family: 'Roboto Mono', 'Ubuntu Mono', 'Consolas', 'Courier New', Courier, monospace;
 }
 
 .pre {
@@ -25,7 +24,7 @@ body {
 }
 
 code {
-	font-family: 'Ubuntu Mono', 'Consolas', 'Courier New', Courier, monospace;
+	font-family: 'Roboto Mono', 'Ubuntu Mono', 'Consolas', 'Courier New', Courier, monospace;
 	white-space: pre-wrap;
 }
 

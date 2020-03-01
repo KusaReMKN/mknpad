@@ -31,7 +31,7 @@ function RunPAD(PAD, n = 0) {
 			PADVARS[GetVarName('PADAOFFSET')] = 1;
 			n = -n;
 		}
-		function CalcCCode(Command) {
+		function CalcCCode(Command, first = 1) {
 			function isOpe(str) {
 				let Opes = [
 					'(', ')', '*', '/', '%', '+', '-', '<<', '>>', '<', '<=', '>', '>=', '==', '!=', '&', '^', '|', '=', '&&', '||', '+=', '-=', '*=', '/=', '%=', '<<=', '>>=', '&=', '^=', '|=', '++'
@@ -69,7 +69,7 @@ function RunPAD(PAD, n = 0) {
 			sp1 = sp2 = 0;
 
 			// ポーランド記法に書き換え
-			for (let n = 1; n < Command.length; n++) {
+			for (let n = first; n < Command.length; n++) {
 				if (Command[n] === '0') {
 					Command[n] = '0e0';
 				}
@@ -189,7 +189,7 @@ function RunPAD(PAD, n = 0) {
 					sp1--;
 				}
 			}
-			PADGLOBVARS[GetVarName('RETURN')] = v[1];
+			return PADGLOBVARS[GetVarName('RETURN')] = v[1];
 		}
 		function IsVar(ValueStr) {
 			return (isNaN(parseFloat(ValueStr)));
@@ -200,70 +200,31 @@ function RunPAD(PAD, n = 0) {
 		function GetVarName(str) {	// 変数名の内部名を取得
 			return str + '_' + window.btoa(unescape(encodeURIComponent(str))).slice(0, 2);
 		}
-		function Natural2PAD(Command) {// 自然式を変換する
-			switch (Command[2]) {
-				case '=':	// 二項演算たち
-				case '<-':
-				case '<=>':
-				case '+=':
-				case '-=':
-				case ':=':
-				case '*=':
-				case '/=':
-				case '%=':
-				case '&=':
-				case '^=':
-				case '|=':
-				case '<<=':
-				case '>>=':
-					{
-						let OPER = {
-							'=': 'MOV',
-							'<-': 'MOV',
-							'<=>': 'SWAP',
-							'+=': 'ADD',
-							'-=': 'SUB',
-							':=': 'GLOB',
-							'*=': 'MUL',
-							'/=': 'DIV',
-							'%=': 'MOD',
-							'&=': 'AND',
-							'^=': 'XOR',
-							'|=': 'OR',
-							'<<=': 'SHL',
-							'>>=': 'SHR',
-						};
-						let tmpoper = OPER[Command[2]];
-						if (tmpoper !== undefined) {
-							Command[0] = tmpoper;
-							Command[2] = Command[3];
-						}
-					}
-					break;
-				case '++':	// 単項演算子たち
-				case '--':
-					{
-						let OPER = {
-							'++': 'INC',
-							'--': 'DEC',
-						}
-						let tmpoper = OPER[Command[2]];
-						if (tmpoper !== undefined) {
-							Command[0] = tmpoper;
-						}
-					}
-					break;
+
+		function atCommand(Command) {
+			if (Command[0] === '@import') {
+				alert('@import は未実装です');
+				return 0;
 			}
+			if (Command[0] === '@option') {
+				alert('@option は未実装です');
+				return 0;
+			}
+			alert('未知の @ コマンドです: ' + Command[0]);
+			return -1;
 		}
+
 		function RUN(Command) {
-			if (Command[0] === '$') {
-				Natural2PAD(Command);
+			if (RegExp('^@').test(Command[0])) {	// @ コマンドの処理
+				atCommand(Command);
+				return 'next';
 			}
+
 			switch (Command[0]) {
 				case 'C:':
 					CalcCCode(Command);
 					break;
-				case 'RETURN':
+				case 'return':
 					PADGLOBVARS[GetVarName('RETURN')] = (Command.length > 1) ? GetValue(Command[1]) : undefined;
 					return 'return';
 				case 'INPUT':
@@ -302,9 +263,9 @@ function RunPAD(PAD, n = 0) {
 						} while (RetryFlag);
 					}
 					break;
-				case 'BREAK':
+				case 'break':
 					return 'break';
-				case 'CONTINUE':
+				case 'continue':
 					return 'continue';
 				case 'PUSH':	// スタックに積む
 					PADGLOBVARS[GetVarName(-(PADGLOBVARS[GetVarName('STACKOFFSET')]++))] = GetValue(Command[1]);
@@ -377,19 +338,7 @@ function RunPAD(PAD, n = 0) {
 						else PADVARS[GetVarName(PADVARS[GetVarName(Command[1])].split(' ')[1] * 1 + GetValue(Command[2]) * 1)] = GetValue(Command[3]);
 					}
 					break;
-				case 'ADD':
-					if (!IsVar(Command[1])) throw 'OperandError';
-					else PADVARS[GetVarName(Command[1])] += GetValue(Command[2]);
-					break;
-				case 'SUB':
-					if (!IsVar(Command[1])) throw 'OperandError';
-					else PADVARS[GetVarName(Command[1])] -= GetValue(Command[2]);
-					break;
-				case 'LET':
-				case 'MOV':
-					if (!IsVar(Command[1])) throw 'OperandError';
-					else PADVARS[GetVarName(Command[1])] = GetValue(Command[2]);
-					break;
+
 				case 'GROB':
 				case 'GLOB':
 					if (!IsVar(Command[1])) throw 'OperandError';
@@ -414,14 +363,7 @@ function RunPAD(PAD, n = 0) {
 						}
 					}
 					break;
-				case 'INC':
-					if (!IsVar(Command[1])) throw 'OperandError';
-					else PADVARS[GetVarName(Command[1])]++;
-					break;
-				case 'DEC':
-					if (!IsVar(Command[1])) throw 'OperandError';
-					else PADVARS[GetVarName(Command[1])]--;
-					break;
+
 				case 'PRINT':
 					for (let i = 0; i < Command.length - 1; i++) PrintOut(GetValue(Command[i + 1]) + ' ');
 					PrintOut('\n');
@@ -438,18 +380,7 @@ function RunPAD(PAD, n = 0) {
 						}
 					}
 					break;
-				case 'MUL':
-					if (!IsVar(Command[1])) throw 'OperandError';
-					else PADVARS[GetVarName(Command[1])] *= GetValue(Command[2]);
-					break;
-				case 'DIV':
-					if (!IsVar(Command[1])) throw 'OperandError';
-					else PADVARS[GetVarName(Command[1])] /= GetValue(Command[2]);
-					break;
-				case 'MOD':
-					if (!IsVar(Command[1])) throw 'OperandError';
-					else PADVARS[GetVarName(Command[1])] %= GetValue(Command[2]);
-					break;
+
 				case 'POW':
 					if (!IsVar(Command[1])) throw 'OperandError';
 					else PADVARS[GetVarName(Command[1])] = Math.pow(PADVARS[GetVarName(Command[1])], GetValue(Command[2]));
@@ -458,96 +389,26 @@ function RunPAD(PAD, n = 0) {
 					if (!IsVar(Command[1])) throw 'OperandError';
 					else PADVARS[GetVarName(Command[1])] = Math.sqrt(PADVARS[GetVarName(Command[1])]);
 					break;
-				case 'AND':
-					if (!IsVar(Command[1])) throw 'OperandError';
-					else PADVARS[GetVarName(Command[1])] &= GetValue(Command[2]);
-					break;
-				case 'XOR':
-					if (!IsVar(Command[1])) throw 'OperandError';
-					else PADVARS[GetVarName(Command[1])] ^= GetValue(Command[2]);
-					break;
-				case 'OR':
-					if (!IsVar(Command[1])) throw 'OperandError';
-					else PADVARS[GetVarName(Command[1])] |= GetValue(Command[2]);
-					break;
-				case 'SHL':
-					if (!IsVar(Command[1])) throw 'OperandError';
-					else PADVARS[GetVarName(Command[1])] <<= GetValue(Command[2]);
-					break;
-				case 'SHR':
-					if (!IsVar(Command[1])) throw 'OperandError';
-					else PADVARS[GetVarName(Command[1])] >>= GetValue(Command[2]);
-					break;
-				case 'NOT':
-					if (!IsVar(Command[1])) throw 'OperandError';
-					else PADVARS[GetVarName(Command[1])] = ~PADVARS[GetVarName(Command[1])];
-					break;
-				case 'NEG':
-					if (!IsVar(Command[1])) throw 'OperandError';
-					else PADVARS[GetVarName(Command[1])] = -PADVARS[GetVarName(Command[1])];
-					break;
+
 				case 'PI':
 					if (!IsVar(Command[1])) throw 'OperandError';
 					else PADVARS[GetVarName(Command[1])] = Math.PI;
 					break;
 				case 'INT3':
 					throw 'Breakpoint';
-				case '↑↑↓↓←→←→BA':
-					PrintOut('KONAMI COMMAND!!\n');
-					break;
-				case 'GO':
-					open(Command[1], '_blank');
-					break;
+
 				default:
-					throw 'UnknownCommand';
+					CalcCCode(Command, 0);
 			}
 			return 'next';
 		}
 		for (let i = 0; i < PAD.children.length; i++) {
-			let CmpFuncs = [
-				function (a, b) { return false; },
-				function (a, b) { return a != b; },
-				function (a, b) { return a == b; },
-				function (a, b) { return a < b; },
-				function (a, b) { return a > b; },
-				function (a, b) { return a <= b; },
-				function (a, b) { return a >= b; },
-			];
 			// 前判定ループ
 			if (PAD.children.item(i).classList.contains('WhlBlk')) {
 				let Command = PAD.children.item(i).textContent.split(' ');
 				FullCommand = PAD.children.item(i).textContent;
-				let COMPER;
-				switch (Command[0]) {
-					case 'NEQ': COMPER = CmpFuncs[1]; break;
-					case 'EQ': COMPER = CmpFuncs[2]; break;
-					case 'LT': COMPER = CmpFuncs[3]; break;
-					case 'GT': COMPER = CmpFuncs[4]; break;
-					case 'LTE': COMPER = CmpFuncs[5]; break;
-					case 'GTE': COMPER = CmpFuncs[6]; break;
-					case '$':
-						{
-							switch (Command[2]) {
-								case '!=': COMPER = CmpFuncs[1]; break;
-								case '==': COMPER = CmpFuncs[2]; break;
-								case '<': COMPER = CmpFuncs[3]; break;
-								case '>': COMPER = CmpFuncs[4]; break;
-								case '<=': COMPER = CmpFuncs[5]; break;
-								case '>=': COMPER = CmpFuncs[6]; break;
-								default: throw 'UnknownCompCommand';
-							}
-							Command[2] = Command[3];
-						}
-						break;
-					case 'C:':
-						COMPER = function (a, b) {
-							CalcCCode(Command);
-							return PADGLOBVARS[GetVarName('RETURN')];
-						}
-						break;
-					default: throw 'UnknownCompCommand';
-				}
-				while (COMPER(GetValue(Command[1]), GetValue(Command[2]))) {
+
+				while (CalcCCode(Command, 0)) {
 					let WHL = PAD.children.item(i + 1);
 					let res = RunPAD(WHL, n + 1);
 					if (res === 'break') break;
@@ -560,36 +421,7 @@ function RunPAD(PAD, n = 0) {
 			if (PAD.children.item(i).classList.contains('DowBlk')) {
 				let Command = PAD.children.item(i).textContent.split(' ');
 				FullCommand = PAD.children.item(i).textContent;
-				let COMPER;
-				switch (Command[0]) {
-					case 'NEQ': COMPER = CmpFuncs[1]; break;
-					case 'EQ': COMPER = CmpFuncs[2]; break;
-					case 'LT': COMPER = CmpFuncs[3]; break;
-					case 'GT': COMPER = CmpFuncs[4]; break;
-					case 'LTE': COMPER = CmpFuncs[5]; break;
-					case 'GTE': COMPER = CmpFuncs[6]; break;
-					case '$':
-						{
-							switch (Command[2]) {
-								case '!=': COMPER = CmpFuncs[1]; break;
-								case '==': COMPER = CmpFuncs[2]; break;
-								case '<': COMPER = CmpFuncs[3]; break;
-								case '>': COMPER = CmpFuncs[4]; break;
-								case '<=': COMPER = CmpFuncs[5]; break;
-								case '>=': COMPER = CmpFuncs[6]; break;
-								default: throw 'UnknownCompCommand';
-							}
-							Command[2] = Command[3];
-						}
-						break;
-					case 'C:':
-						COMPER = function (a, b) {
-							CalcCCode(Command);
-							return PADGLOBVARS[GetVarName('RETURN')];
-						}
-						break;
-					default: throw 'UnknownCompCommand';
-				}
+
 				do {
 					let WHL = PAD.children.item(i + 1);
 					let res = RunPAD(WHL, n + 1);
@@ -597,47 +429,18 @@ function RunPAD(PAD, n = 0) {
 					if (res === 'continue') continue;
 					if (res === 'error') return 'error';
 					if (res === 'return') return 'return';
-				} while (COMPER(GetValue(Command[1]), GetValue(Command[2])));
+				} while (CalcCCode(Command, 0));
 			}
 			// 条件分岐
 			if (PAD.children.item(i).classList.contains('IfBlk')) {
 				let Command = PAD.children.item(i).textContent.split(' ');
 				FullCommand = PAD.children.item(i).textContent;
-				let COMPER;
-				switch (Command[0]) {
-					case 'NEQ': COMPER = CmpFuncs[1]; break;
-					case 'EQ': COMPER = CmpFuncs[2]; break;
-					case 'LT': COMPER = CmpFuncs[3]; break;
-					case 'GT': COMPER = CmpFuncs[4]; break;
-					case 'LTE': COMPER = CmpFuncs[5]; break;
-					case 'GTE': COMPER = CmpFuncs[6]; break;
-					case '$':
-						{
-							switch (Command[2]) {
-								case '!=': COMPER = CmpFuncs[1]; break;
-								case '==': COMPER = CmpFuncs[2]; break;
-								case '<': COMPER = CmpFuncs[3]; break;
-								case '>': COMPER = CmpFuncs[4]; break;
-								case '<=': COMPER = CmpFuncs[5]; break;
-								case '>=': COMPER = CmpFuncs[6]; break;
-								default: throw 'UnknownCompCommand';
-							}
-							Command[2] = Command[3];
-						}
-						break;
-					case 'C:':
-						COMPER = function (a, b) {
-							CalcCCode(Command);
-							return PADGLOBVARS[GetVarName('RETURN')];
-						}
-						break;
-					default: throw 'UnknownCompCommand';
-				}
+
 				let NestBlock = PAD.children.item(i + 1);
 				let ThenBlk = NestBlock.getElementsByClassName('BlkBlk')[0];
 				let ElseBlk = NestBlock.getElementsByClassName('BlkBlk')[1];
 
-				if (COMPER(GetValue(Command[1]), GetValue(Command[2]))) {
+				if (CalcCCode(Command, 0)) {
 					let res = RunPAD(ThenBlk, n + 1);
 					if (res === 'break' || res === 'continue' || res === 'error' || res === 'return') {
 						return res;
