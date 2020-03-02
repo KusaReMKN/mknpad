@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Noto+Sans+JP:400,700|Roboto+Mono&display=swap&subset=japanese,latin-ext');
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans+JP:400,700|Source+Code+Pro&display=swap&subset=japanese,latin-ext');
 
 * {
 	box-sizing: border-box;
@@ -10,13 +10,13 @@ body {
 }
 
 .PAD {
-	font-family: 'Roboto Mono', 'Ubuntu Mono', monospace;
+	font-family: 'Source Code Pro', 'Ubuntu Mono', monospace;
 	overflow-x: scroll;
 	white-space: nowrap;
 }
 
 .tt {
-	font-family: 'Roboto Mono', 'Ubuntu Mono', 'Consolas', 'Courier New', Courier, monospace;
+	font-family: 'Source Code Pro', 'Ubuntu Mono', 'Consolas', 'Courier New', Courier, monospace;
 }
 
 .pre {
@@ -24,7 +24,7 @@ body {
 }
 
 code {
-	font-family: 'Roboto Mono', 'Ubuntu Mono', 'Consolas', 'Courier New', Courier, monospace;
+	font-family: 'Source Code Pro', 'Ubuntu Mono', 'Consolas', 'Courier New', Courier, monospace;
 	white-space: pre-wrap;
 }
 
