@@ -10,10 +10,6 @@ function CreateBlock(ClickedEmptyBlock) {
 		UpdateBlocks();
 		return false;
 	}
-	// あからさまに比較じゃない奴は
-	if (CBCommand.match(/^(NEQ|EQ|LT|GT|LTE|GTE|\$|C:)/g) === null && document.getElementById('blktype').value.match(/^(while|until|if)/g) !== null) {
-		document.getElementById('blktype').value = 'normal';
-	}
 	switch (document.getElementById('blktype').value) {
 		case 'while':
 			{
