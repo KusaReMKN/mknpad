@@ -5,7 +5,7 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta http-equiv="X-UA-Compatible" content="ie=edge">
-		<title>PAD Editor “筑前煮”</title>
+		<title>PAD Editor “ダブルチーズバーガー”</title>
 		<link rel="stylesheet" href="./css/pad.css" type="text/css">
 		<script src="./js/createblock.js" defer async></script>
 		<script src="./js/editblock.js" defer async></script>
@@ -17,15 +17,40 @@
 	</head>
 
 	<body>
-		<h1>PAD Editor “筑前煮”</h1>
-		<span class="tt i" style="text-decoration: underline;">
-			MKNPAD Chikuzen-ni (0.03.02.200218.ααα) since 2019-11-15
+		<h1>PAD Editor “ダブルチーズバーガー”</h1>
+		<span class="i" style="text-decoration: underline;">
+			MKNPAD (0.03.02.ααα) since 2019-11-15, Double cheeseburger (0.001.200302.α) since 2020-03-02
 		</span>
 		<p>
 			PAD Editor (MKNPAD) は現在開発中です。
 			機能の一部は予告なしに変更される恐れがあります。
 			<strong>Internet Explorer と Microsoft Edge (EdgeHTML) では一部、もしくは全部の機能が利用できません。</strong>
 		</p>
+		<details>
+			<summary>ダブルチーズバーガー</summary>
+			<ul>
+				<li>
+					筑前煮との比較
+					<ul>
+						<li>
+							次のコマンドは廃止になりました:
+							<code>$</code>, <code>ADD</code>, <code>SUB</code>, <code>LET</code>, <code>MOV</code>, <code>MUL</code>,
+							<code>DIV</code>, <code>MOD</code>, <code>INC</code>, <code>DEC</code>,
+							<code>AND</code>, <code>XOR</code>, <code>OR</code>, <code>SHL</code>, <code>SHR</code>, <code>NOT</code>,
+							<code>NEG</code>, コナミコマンド, <code>GO</code>
+						</li>
+						<li>条件ブロックの比較コマンドは廃止されました。 代わりに疑似 C コードが利用できます。</li>
+						<li>コマンドブロックのコマンドがレガシコマンドに合致しない場合は疑似 C コードとして処理されます。</li>
+					</ul>
+				</li>
+				<li>
+					ダブルチーズバーガーの新機能
+					<ul>
+						<li><code>@</code> コマンドが追加されました。</li>
+					</ul>
+				</li>
+			</ul>
+		</details>
 		<hr>
 		<input type="hidden" id="blktype">
 		<div class="BlockPalette">
