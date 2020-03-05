@@ -5,7 +5,7 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta http-equiv="X-UA-Compatible" content="ie=edge">
-		<title>PAD Editor “筑前煮”</title>
+		<title>PAD Editor “エリンギ”</title>
 		<link rel="stylesheet" href="./css/pad.css" type="text/css">
 		<script src="./js/createblock.js" defer async></script>
 		<script src="./js/editblock.js" defer async></script>
@@ -17,15 +17,30 @@
 	</head>
 
 	<body>
-		<h1>PAD Editor “筑前煮”</h1>
-		<span class="tt i" style="text-decoration: underline;">
-			MKNPAD Chikuzen-ni (0.03.02.200218.ααα) since 2019-11-15
+		<h1>PAD Editor “エリンギ”</h1>
+		<span class="i" style="text-decoration: underline;">
+			MKNPAD (0.05.00.αα) since 2019-11-15, Eryngii (0.000.200305.α) since 2020-03-05
 		</span>
 		<p>
 			PAD Editor (MKNPAD) は現在開発中です。
 			機能の一部は予告なしに変更される恐れがあります。
 			<strong>Internet Explorer と Microsoft Edge (EdgeHTML) では一部、もしくは全部の機能が利用できません。</strong>
 		</p>
+		<details>
+			<summary>PAD Editor Eryngii リリースノート</summary>
+			<p style="font-size: xx-large; font-weight: bold; text-align: center; color: red;">
+				ダブルチーズバーガーは滅んだ。
+				今までの PAD Editor の根本の大部分は跡形もなく消え去ってしまった。
+			</p>
+			<ul>
+				<li>
+					PAD Sim 時代から引き継がれていた古の関数 “RUN” が消滅し、天高く羽ばたけるようになりました。
+				</li>
+				<li>
+					PAD のテキストフォントが選択できるようになりました。“視覚効果” をクリックしてフォントを選択してください。
+				</li>
+			</ul>
+		</details>
 		<hr>
 		<input type="hidden" id="blktype">
 		<div class="BlockPalette">
@@ -67,13 +82,13 @@
 		<button onclick="SavePAD2File();" title="Save as file"><img src="./img/save.svg" alt="Save"></button>
 		<button onclick="LoadPADfromFile();" title="Open"><img src="./img/open.svg" alt="Open"></button>
 		<button onclick="location.reload(false);" title="Clear"><img src="./img/clear.svg" alt="Clear"></button>
-		<button onclick="document.getElementById('PadOutput').textContent = Pad2Text();" title="Convert PAD to Text"><img
-				src="./img/pad2txt.png" alt="PAD2Text"></button>
-		<button onclick="document.getElementById('PadOutput').textContent = '';" title="Clear Output"><img
-				src="./img/cls.png" alt="cls"></button>
+		<button onclick="document.getElementById('PadOutput').textContent = Pad2Text();" title="Convert PAD to Text">
+			<img src="./img/pad2txt.png" alt="PAD2Text"></button>
+		<button onclick="document.getElementById('PadOutput').textContent = '';" title="Clear Output">
+			<img src="./img/cls.png" alt="cls"></button>
 		<button onclick="GetLibrary();" title="Library"><img src="./img/library.png" alt="Library"></button>
-		<button onclick="Text2Pad(prompt('テキスト形式に変換された PAD のデータを入力してください'));" title="Convert Text to PAD"><img
-				src="./img/txt2pad.png" alt="Text2PAD"></button>
+		<button onclick="Text2Pad(prompt('テキスト形式に変換された PAD のデータを入力してください'));" title="Convert Text to PAD">
+			<img src="./img/txt2pad.png" alt="Text2PAD"></button>
 		<h2>実行結果</h2>
 		<div id="PadOutput" class="tt pre" style="user-select: all;"></div>
 		<h2>エラー情報</h2>
@@ -97,6 +112,109 @@
 			<div id="deleteit" class="MenuItem">Delete</div>
 			<div id="editit" class="MenuItem">Edit</div>
 		</div>
+		<script>
+			function ChgPADFont(FontFamily) {
+				let PADs = document.getElementsByClassName('PAD');
+				for (let i = 0; i < PADs.length; i++) {
+					PADs[i].style.fontFamily = '\'' + FontFamily + '\', monospace';
+				}
+				let codes = document.getElementsByTagName('code');
+				for (let i = 0; i < codes.length; i++) {
+					codes[i].style.fontFamily = '\'' + FontFamily + '\', monospace';
+				}
+				let tts = document.getElementsByClassName('tt');
+				for (let i = 0; i < tts.length; i++) {
+					tts[i].style.fontFamily = '\'' + FontFamily + '\', monospace';
+				}
+
+			}
+		</script>
+		<details>
+			<summary>視覚効果</summary>
+			<form>
+				<fieldset>
+					<legend>フォント</legend>
+					<div>
+						<label class="Cousine">
+							<input type="radio" name="font" id="Cousine" onclick="ChgPADFont('Cousine');">
+							Cousine (Web Font)
+						</label>
+					</div>
+					<div>
+						<label class="Inconsolata">
+							<input type="radio" name="font" id="Inconsolata" onclick="ChgPADFont('Inconsolata');">
+							Inconsolata (Web Font)
+						</label>
+					</div>
+					<div>
+						<label class="IBMPlexMono">
+							<input type="radio" name="font" id="IBMPlexMono" onclick="ChgPADFont('IBM Plex Mono');">
+							IBM Plex Mono (Web Font)
+						</label>
+					</div>
+					<div>
+						<label class="CourierPrime">
+							<input type="radio" name="font" id="CourierPrime" onclick="ChgPADFont('Courier Prime');">
+							Courier Prime (Web Font)
+						</label>
+					</div>
+					<div>
+						<label class="FiraMono">
+							<input type="radio" name="font" id="FiraMono" onclick="ChgPADFont('Fira Mono');">
+							Fira Mono (Web Font)
+						</label>
+					</div>
+					<div>
+						<label class="OxygenMono">
+							<input type="radio" name="font" id="OxygenMono" onclick="ChgPADFont('Oxygen Mono');">
+							Oxygen Mono (Web Font)
+						</label>
+					</div>
+					<div>
+						<label class="FiraCode">
+							<input type="radio" name="font" id="FiraCode" onclick="ChgPADFont('Fira Code');">
+							Fira Code (Web Font)
+						</label>
+					</div>
+					<div>
+						<label class="RobotoMono">
+							<input type="radio" name="font" id="RobotoMono" onclick="ChgPADFont('Roboto Mono');">
+							Roboto Mono (Web Font)
+						</label>
+					</div>
+					<div>
+						<label class="SourceCodePro">
+							<input type="radio" name="font" id="SourceCodePro" onclick="ChgPADFont('Source Code Pro');">
+							Source Code Pro (Web Font)
+						</label>
+					</div>
+					<div>
+						<label class="UbuntuMono">
+							<input type="radio" name="font" id="UbuntuMono" onclick="ChgPADFont('Ubuntu Mono');">
+							Ubuntu Mono (Web Font)
+						</label>
+					</div>
+					<div>
+						<label class="CourierNew">
+							<input type="radio" name="font" id="CourierNew" onclick="ChgPADFont('Courier New');">
+							Courier New
+						</label>
+					</div>
+					<div>
+						<label class="Courier">
+							<input type="radio" name="font" id="CourierNew" onclick="ChgPADFont('Courier');">
+							Courier
+						</label>
+					</div>
+					<div>
+						<label class="Consolas">
+							<input type="radio" name="font" id="CourierNew" onclick="ChgPADFont('Consolas');">
+							Consolas
+						</label>
+					</div>
+				</fieldset>
+			</form>
+		</details>
 	</body>
 
 </html>
