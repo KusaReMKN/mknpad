@@ -52,7 +52,7 @@ function RunPAD(PAD, n = 0) {
 	for (let i = 0; i < PAD.children.length; i++) {
 		// 前判定ループ
 		if (PAD.children.item(i).classList.contains('WhlBlk')) {
-			let Command = PAD.children.item(i).textContent.split(' ');
+			let Command = PreProc(PAD.children.item(i).textContent).split(' ');
 			FullCommand = PAD.children.item(i).textContent;
 
 			while (CalcCCode(Command, 0)) {
@@ -66,7 +66,7 @@ function RunPAD(PAD, n = 0) {
 		}
 		// 後判定ループ
 		if (PAD.children.item(i).classList.contains('DowBlk')) {
-			let Command = PAD.children.item(i).textContent.split(' ');
+			let Command = PreProc(PAD.children.item(i).textContent).split(' ');
 			FullCommand = PAD.children.item(i).textContent;
 
 			do {
@@ -80,7 +80,7 @@ function RunPAD(PAD, n = 0) {
 		}
 		// 条件分岐
 		if (PAD.children.item(i).classList.contains('IfBlk')) {
-			let Command = PAD.children.item(i).textContent.split(' ');
+			let Command = PreProc(PAD.children.item(i).textContent).split(' ');
 			FullCommand = PAD.children.item(i).textContent;
 
 			let NestBlock = PAD.children.item(i + 1);
@@ -101,7 +101,7 @@ function RunPAD(PAD, n = 0) {
 		}
 		// 定期済み処理呼び出し
 		if (PAD.children.item(i).classList.contains('FncBlk')) {
-			let Command = PAD.children.item(i).textContent.split(' ');
+			let Command = PreProc(PAD.children.item(i).textContent).split(' ');
 			FullCommand = PAD.children.item(i).textContent;
 			let PREVVARS = JSON.stringify(PADVARS);
 			let res = RunPAD(document.getElementById(Command), -(n + 1));
@@ -110,7 +110,7 @@ function RunPAD(PAD, n = 0) {
 		}
 		// コマンドの処理
 		if (PAD.children.item(i).classList.contains('CmdBlk')) {
-			let Command = PAD.children.item(i).textContent.split(' ');
+			let Command = PreProc(PAD.children.item(i).textContent).split(' ');
 			FullCommand = PAD.children.item(i).textContent;
 			let res = RUN(Command);
 			if (res === 'break' || res === 'continue' || res === 'error' || res === 'return') {
@@ -124,11 +124,11 @@ function RunPAD(PAD, n = 0) {
 
 	function PreProc(CommandLine) {
 		const RepTable = {
-			'_Alignof': '$ALIGNOF$',
-			'(float\)': '$ASFLOAT$',
+			// '_Alignof': '$ALIGNOF$',
+			// '(float\)': '$ASFLOAT$',
 			'sizeof': '$SIZEOF$',
-			'(void)': '$ASVOID$',
-			'(int)': '$ASINT$',
+			// '(void)': '$ASVOID$',
+			// '(int)': '$ASINT$',
 			'<<=': '$LETSHL$',
 			'>>=': '$LETSHR$',
 			'\\+\\+': '$INC$',
@@ -166,8 +166,8 @@ function RunPAD(PAD, n = 0) {
 			',': '$COMMA$',
 			'\\(': '$BRAL$',
 			'\\)': '$BRAR$',
-			'\\[': '$ELEL$',
-			'\\]': '$ELER$',
+			'\\[': '$INDEX$ $BRAL$',
+			'\\]': '$BRAR$',
 			'\\.': '$DOT$',
 		};
 		for (let key in RepTable) {
@@ -179,7 +179,51 @@ function RunPAD(PAD, n = 0) {
 	function CalcCCode(Command, first = 1) {
 		function isOpe(str) {
 			let Opes = [
-				'(', ')', '*', '/', '%', '+', '-', '<<', '>>', '<', '<=', '>', '>=', '==', '!=', '&', '^', '|', '=', '&&', '||', '+=', '-=', '*=', '/=', '%=', '<<=', '>>=', '&=', '^=', '|=', '++', '--', ','
+				'$ALIGNOF$',
+				'$ASFLOAT$',
+				'$SIZEOF$',
+				'$ASVOID$',
+				'$ASINT$',
+				'$LETSHL$',
+				'$LETSHR$',
+				'$INC$',
+				'$DEC$',
+				'$ARROW$',
+				'$SHL$',
+				'$SHR$',
+				'$LTE$',
+				'$GTE$',
+				'$EQU$',
+				'$NEQ$',
+				'$LOGAND$',
+				'$LOGOR$',
+				'$LETPLUS$',
+				'$LETMINUS$',
+				'$LETMUL$',
+				'$LETDIV$',
+				'$LETMOD$',
+				'$LETAND$',
+				'$LETXOR$',
+				'$LETOR$',
+				'$PLUS$',
+				'$MINUS$',
+				'$AST$',
+				'$AMP$',
+				'$DIV$',
+				'$MOD$',
+				'$LT$',
+				'$GT$',
+				'$XOR$',
+				'$OR$',
+				'$QUE$',
+				'$CLN$',
+				'$LET$',
+				'$COMMA$',
+				'$BRAL$',
+				'$BRAR$',
+				'$INDEX$',
+				'$DOT$',
+
 			];
 			for (let i = 0; i < Opes.length; i++) if (str === Opes[i]) return true;
 			return false;
@@ -192,21 +236,24 @@ function RunPAD(PAD, n = 0) {
 		let i;
 
 		// 演算子の優先順位登録
-		pri['('] = 16;
-		pri['++'] = pri['--'] = 15;
-		pri['*'] = pri['/'] = pri['%'] = 13;
-		pri['+'] = pri['-'] = 12;
-		pri['<<'] = pri['>>'] = 11;
-		pri['<'] = pri['<='] = pri['>'] = pri['>='] = 10;
-		pri['=='] = pri['!='] = 9;
-		pri['&'] = 8;
-		pri['^'] = 7;
-		pri['|'] = 6;
-		pri['&&'] = 5;
-		pri['||'] = 4;
-		pri['='] = pri['+='] = pri['-='] = pri['*='] = pri['/='] = pri['%='] = pri['<<='] = pri['>>='] = pri['&='] = pri['^='] = pri['|='] = 2;
-		pri[','] = 1;
-		pri[')'] = 0;
+		pri['$BRAL$'] = pri['$ARROW$'] = 16;
+		pri['$INC$'] = pri['$DEC$'] = pri['$SIZEOF$'] = 15;
+		pri['$AST$'] = pri['$DIV$'] = pri['$MOD$'] = 13;
+		pri['$PLUS$'] = pri['$MINUS$'] = 12;
+		pri['$SHL$'] = pri['$SHR$'] = 11;
+		pri['$LT$'] = pri['$LTE$'] = pri['$GT$'] = pri['$GTE$'] = 10;
+		pri['$EQU$'] = pri['$NEQ$'] = 9;
+		pri['$AMP$'] = 8;
+		pri['$XOR$'] = 7;
+		pri['$OR$'] = 6;
+		pri['$LOGAND$'] = 5;
+		pri['$LOGOR$'] = 4;
+		pri['$LET$'] = pri['$LETPLUS$'] = pri['$LETMINUS$']
+			= pri['$LETMUL$'] = pri['$LETDIV$'] = pri['$LETMOD$']
+			= pri['$LETSHL$'] = pri['$LETSHR$']
+			= pri['$LETAND$'] = pri['LETXOR'] = pri['$LETOR$'] = 2;
+		pri['$COMMA$'] = 1;
+		pri['$BRAR$'] = 0;
 
 		// 番兵たち
 		stack[0] = 0;
@@ -219,8 +266,8 @@ function RunPAD(PAD, n = 0) {
 			if (Command[n] === '0') {
 				Command[n] = '0e0';
 			}
-			while ((pri[Command[n]] !== undefined ? pri[Command[n]] : 15) <= (pri[stack[sp1]] !== undefined ? pri[stack[sp1]] : 15) && stack[sp1] !== '(') polish[++sp2] = stack[sp1--];
-			if (Command[n] !== ')') stack[++sp1] = Command[n];
+			while ((pri[Command[n]] !== undefined ? pri[Command[n]] : 15) <= (pri[stack[sp1]] !== undefined ? pri[stack[sp1]] : 15) && stack[sp1] !== '$BRAL$') polish[++sp2] = stack[sp1--];
+			if (Command[n] !== '$BRAR$') stack[++sp1] = Command[n];
 			else sp1--;
 		}
 		// スタックの残りを取り出す
@@ -235,96 +282,97 @@ function RunPAD(PAD, n = 0) {
 			}
 			else {
 				switch (polish[i]) {
-					case '*': v[sp1 - 1] = (v[sp1 - 1] * v[sp1]); break;
-					case '/': v[sp1 - 1] = (v[sp1 - 1] / v[sp1]); break;
-					case '%': v[sp1 - 1] = (v[sp1 - 1] % v[sp1]); break;
-					case '+': v[sp1 - 1] = (v[sp1 - 1] + v[sp1]); break;
-					case '-': v[sp1 - 1] = (v[sp1 - 1] - v[sp1]); break;
-					case '<<': v[sp1 - 1] = (v[sp1 - 1] << v[sp1]); break;
-					case '>>': v[sp1 - 1] = (v[sp1 - 1] >> v[sp1]); break;
-					case '<': v[sp1 - 1] = (v[sp1 - 1] < v[sp1]); break;
-					case '<=': v[sp1 - 1] = (v[sp1 - 1] <= v[sp1]); break;
-					case '>': v[sp1 - 1] = (v[sp1 - 1] > v[sp1]); break;
-					case '>=': v[sp1 - 1] = (v[sp1 - 1] >= v[sp1]); break;
-					case '==': v[sp1 - 1] = (v[sp1 - 1] == v[sp1]); break;
-					case '!=': v[sp1 - 1] = (v[sp1 - 1] != v[sp1]); break;
-					case '&': v[sp1 - 1] = (v[sp1 - 1] & v[sp1]); break;
-					case '^': v[sp1 - 1] = (v[sp1 - 1] ^ v[sp1]); break;
-					case '|': v[sp1 - 1] = (v[sp1 - 1] | v[sp1]); break;
-					case '&&': v[sp1 - 1] = (v[sp1 - 1] && v[sp1]); break;
-					case '||': v[sp1 - 1] = (v[sp1 - 1] || v[sp1]); break;
-					case ',': v[sp1 - 1] = v[sp1]; break;
-					case '=':
+					case '$INDEX$': throw 'C:UnimplementedOperand([';
+					case '$AMP$': v[sp1 - 1] = (v[sp1 - 1] * v[sp1]); break;
+					case '$DIV$': v[sp1 - 1] = (v[sp1 - 1] / v[sp1]); break;
+					case '$MOD$': v[sp1 - 1] = (v[sp1 - 1] % v[sp1]); break;
+					case '$PLUS$': v[sp1 - 1] = (v[sp1 - 1] + v[sp1]); break;
+					case '$MINUS$': v[sp1 - 1] = (v[sp1 - 1] - v[sp1]); break;
+					case '$SHL$': v[sp1 - 1] = (v[sp1 - 1] << v[sp1]); break;
+					case '$SHR$': v[sp1 - 1] = (v[sp1 - 1] >> v[sp1]); break;
+					case '$LT$': v[sp1 - 1] = (v[sp1 - 1] < v[sp1]); break;
+					case '$LTE$': v[sp1 - 1] = (v[sp1 - 1] <= v[sp1]); break;
+					case '$GT$': v[sp1 - 1] = (v[sp1 - 1] > v[sp1]); break;
+					case '$GTE$': v[sp1 - 1] = (v[sp1 - 1] >= v[sp1]); break;
+					case '$EQU$': v[sp1 - 1] = (v[sp1 - 1] == v[sp1]); break;
+					case '$NEQ$': v[sp1 - 1] = (v[sp1 - 1] != v[sp1]); break;
+					case '$AMP$': v[sp1 - 1] = (v[sp1 - 1] & v[sp1]); break;
+					case '$XOR$': v[sp1 - 1] = (v[sp1 - 1] ^ v[sp1]); break;
+					case '$OR$': v[sp1 - 1] = (v[sp1 - 1] | v[sp1]); break;
+					case '$LOGAND$': v[sp1 - 1] = (v[sp1 - 1] && v[sp1]); break;
+					case '$LOGOR$': v[sp1 - 1] = (v[sp1 - 1] || v[sp1]); break;
+					case '$COMMA$': v[sp1 - 1] = v[sp1]; break;
+					case '$LET$':
 						if (IsVar(varname[sp1 - 1])) {
 							PADVARS[GetVarName(varname[sp1 - 1])] = v[sp1];
 							v[sp1 - 1] = v[sp1];
 						}
 						else throw 'C:OperandError(' + varname[sp1 - 1] + ')';
 						break;
-					case '+=':
+					case '$LETPLUS$':
 						if (IsVar(varname[sp1 - 1])) {
 							PADVARS[GetVarName(varname[sp1 - 1])] += v[sp1];
 							v[sp1 - 1] += v[sp1];
 						}
 						else throw 'C:OperandError(' + varname[sp1 - 1] + ')';
 						break;
-					case '-=':
+					case '$LETMINUS$':
 						if (IsVar(varname[sp1 - 1])) {
 							PADVARS[GetVarName(varname[sp1 - 1])] -= v[sp1];
 							v[sp1 - 1] -= v[sp1];
 						}
 						else throw 'C:OperandError(' + varname[sp1 - 1] + ')';
 						break;
-					case '*=':
+					case '$LETMUL$':
 						if (IsVar(varname[sp1 - 1])) {
 							PADVARS[GetVarName(varname[sp1 - 1])] *= v[sp1];
 							v[sp1 - 1] *= v[sp1];
 						}
 						else throw 'C:OperandError(' + varname[sp1 - 1] + ')';
 						break;
-					case '/=':
+					case '$LETDIV$':
 						if (IsVar(varname[sp1 - 1])) {
 							PADVARS[GetVarName(varname[sp1 - 1])] /= v[sp1];
 							v[sp1 - 1] /= v[sp1];
 						}
 						else throw 'C:OperandError(' + varname[sp1 - 1] + ')';
 						break;
-					case '%=':
+					case '$LETMOD$':
 						if (IsVar(varname[sp1 - 1])) {
 							PADVARS[GetVarName(varname[sp1 - 1])] %= v[sp1];
 							v[sp1 - 1] %= v[sp1];
 						}
 						else throw 'C:OperandError(' + varname[sp1 - 1] + ')';
 						break;
-					case '<<=':
+					case '$LETSHL$':
 						if (IsVar(varname[sp1 - 1])) {
 							PADVARS[GetVarName(varname[sp1 - 1])] <<= v[sp1];
 							v[sp1 - 1] <<= v[sp1];
 						}
 						else throw 'C:OperandError(' + varname[sp1 - 1] + ')';
 						break;
-					case '>>=':
+					case '$LETSHR$':
 						if (IsVar(varname[sp1 - 1])) {
 							PADVARS[GetVarName(varname[sp1 - 1])] >>= v[sp1];
 							v[sp1 - 1] >>= v[sp1];
 						}
 						else throw 'C:OperandError(' + varname[sp1 - 1] + ')';
 						break;
-					case '&=':
+					case '$LETAND$':
 						if (IsVar(varname[sp1 - 1])) {
 							PADVARS[GetVarName(varname[sp1 - 1])] &= v[sp1];
 							v[sp1 - 1] &= v[sp1];
 						}
 						else throw 'C:OperandError(' + varname[sp1 - 1] + ')';
 						break;
-					case '^=':
+					case '$LETXOR$':
 						if (IsVar(varname[sp1 - 1])) {
 							PADVARS[GetVarName(varname[sp1 - 1])] ^= v[sp1];
 							v[sp1 - 1] ^= v[sp1];
 						}
 						else throw 'C:OperandError(' + varname[sp1 - 1] + ')';
 						break;
-					case '|=':
+					case '$LETOR$':
 						if (IsVar(varname[sp1 - 1])) {
 							PADVARS[GetVarName(varname[sp1 - 1])] |= v[sp1];
 							v[sp1 - 1] |= v[sp1];
