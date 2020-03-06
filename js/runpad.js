@@ -30,11 +30,11 @@ function __INTERNAL__function__RunPAD__(__INTERNAL__PADHTMLElement__, __INTERNAL
 
 			while (eval(__INTERNAL__FullCommandLine___)) {
 				let WHL = __INTERNAL__PADHTMLElement__.children.item(__INTERNAL__PADElementNumber__ + 1);
-				let res = __INTERNAL__function__RunPAD__(WHL, __INTERNAL__NestDapth__ + 1);
-				if (res === 'break') break;
-				if (res === 'continue') continue;
-				if (res === 'error') return 'error';
-				if (res === 'return') return 'return';
+				let __INTERNAL__ReturnValue__ = __INTERNAL__function__RunPAD__(WHL, __INTERNAL__NestDapth__ + 1);
+				if (__INTERNAL__ReturnValue__ === 'break') break;
+				if (__INTERNAL__ReturnValue__ === 'continue') continue;
+				if (__INTERNAL__ReturnValue__ === 'error') return 'error';
+				if (__INTERNAL__ReturnValue__ === 'return') return 'return';
 			}
 		}
 		// 後判定ループ
@@ -43,11 +43,11 @@ function __INTERNAL__function__RunPAD__(__INTERNAL__PADHTMLElement__, __INTERNAL
 
 			do {
 				let WHL = __INTERNAL__PADHTMLElement__.children.item(__INTERNAL__PADElementNumber__ + 1);
-				let res = __INTERNAL__function__RunPAD__(WHL, __INTERNAL__NestDapth__ + 1);
-				if (res === 'break') break;
-				if (res === 'continue') continue;
-				if (res === 'error') return 'error';
-				if (res === 'return') return 'return';
+				let __INTERNAL__ReturnValue__ = __INTERNAL__function__RunPAD__(WHL, __INTERNAL__NestDapth__ + 1);
+				if (__INTERNAL__ReturnValue__ === 'break') break;
+				if (__INTERNAL__ReturnValue__ === 'continue') continue;
+				if (__INTERNAL__ReturnValue__ === 'error') return 'error';
+				if (__INTERNAL__ReturnValue__ === 'return') return 'return';
 			} while (eval(__INTERNAL__FullCommandLine___));
 		}
 		// 条件分岐
@@ -59,14 +59,14 @@ function __INTERNAL__function__RunPAD__(__INTERNAL__PADHTMLElement__, __INTERNAL
 			let ElseBlk = NestBlock.getElementsByClassName('BlkBlk')[1];
 
 			if (eval(__INTERNAL__FullCommandLine___)) {
-				let res = __INTERNAL__function__RunPAD__(ThenBlk, __INTERNAL__NestDapth__ + 1);
-				if (res === 'break' || res === 'continue' || res === 'error' || res === 'return') {
-					return res;
+				let __INTERNAL__ReturnValue__ = __INTERNAL__function__RunPAD__(ThenBlk, __INTERNAL__NestDapth__ + 1);
+				if (__INTERNAL__ReturnValue__ === 'break' || __INTERNAL__ReturnValue__ === 'continue' || __INTERNAL__ReturnValue__ === 'error' || __INTERNAL__ReturnValue__ === 'return') {
+					return __INTERNAL__ReturnValue__;
 				}
 			} else {
-				let res = __INTERNAL__function__RunPAD__(ElseBlk, __INTERNAL__NestDapth__ + 1);
-				if (res === 'break' || res === 'continue' || res === 'error' || res === 'return') {
-					return res;
+				let __INTERNAL__ReturnValue__ = __INTERNAL__function__RunPAD__(ElseBlk, __INTERNAL__NestDapth__ + 1);
+				if (__INTERNAL__ReturnValue__ === 'break' || __INTERNAL__ReturnValue__ === 'continue' || __INTERNAL__ReturnValue__ === 'error' || __INTERNAL__ReturnValue__ === 'return') {
+					return __INTERNAL__ReturnValue__;
 				}
 			}
 		}
@@ -74,8 +74,8 @@ function __INTERNAL__function__RunPAD__(__INTERNAL__PADHTMLElement__, __INTERNAL
 		if (__INTERNAL__PADHTMLElement__.children.item(__INTERNAL__PADElementNumber__).classList.contains('FncBlk')) {
 			let Command = __INTERNAL__PADHTMLElement__.children.item(__INTERNAL__PADElementNumber__).textContent.split(' ');
 			__INTERNAL__FullCommandLine___ = __INTERNAL__PADHTMLElement__.children.item(__INTERNAL__PADElementNumber__).textContent;
-			let res = __INTERNAL__function__RunPAD__(document.getElementById(Command), -(__INTERNAL__NestDapth__ + 1));
-			if (res === 'error') return res;
+			let __INTERNAL__ReturnValue__ = __INTERNAL__function__RunPAD__(document.getElementById(Command[0]), -(__INTERNAL__NestDapth__ + 1));
+			if (__INTERNAL__ReturnValue__ === 'error') return __INTERNAL__ReturnValue__;
 		}
 		// コマンドの処理
 		if (__INTERNAL__PADHTMLElement__.children.item(__INTERNAL__PADElementNumber__).classList.contains('CmdBlk')) {
