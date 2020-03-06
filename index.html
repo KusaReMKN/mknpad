@@ -19,7 +19,7 @@
 	<body>
 		<h1>PAD Editor “エリンギ”</h1>
 		<span class="i" style="text-decoration: underline;">
-			MKNPAD (0.05.00.αα) since 2019-11-15, Eryngii (0.000.200305.α) since 2020-03-05
+			MKNPAD (0.05.00.αα) since 2019-11-15, Eryngii (0.000.200306.α) since 2020-03-05
 		</span>
 		<p>
 			PAD Editor (MKNPAD) は現在開発中です。
@@ -38,7 +38,13 @@
 				</li>
 				<li>
 					PAD のテキストフォントが選択できるようになりました。“視覚効果” をクリックしてフォントを選択してください。
-
+				</li>
+				<li>
+					function ブロックの挙動が変更になりました:
+					今までこのブロックは関数の動作をエミュレートするものとして扱われていました。
+					本バージョンからは、このブロックを定義済みの処理内容で置換するように実行されます。
+					これは変数のスコープは呼び出し元と定義済み処理で同一であることを意味します。
+					宣言されていない変数を利用すると実行時エラーになるので注意してください。
 				</li>
 			</ul>
 		</details>
@@ -52,10 +58,12 @@
 			<label class="BlockPaletteItem">
 				<input type="radio" name="mode" onclick="document.getElementById('blktype').value = 'while'">
 				<div class="WhlBlk_"><code>&nbsp;while</code></div>
+				正常に動作しません!
 			</label>
 			<label class="BlockPaletteItem">
 				<input type="radio" name="mode" onclick="document.getElementById('blktype').value = 'until'">
 				<div class="DowBlk_"><code>until&nbsp;</code></div>
+				正常に動作しません!
 			</label>
 			<label class="BlockPaletteItem">
 				<input type="radio" name="mode" onclick="document.getElementById('blktype').value = 'if'">
