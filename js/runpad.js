@@ -1,46 +1,36 @@
 // 【−α】クソ雑魚実行関数 (被依存: PADStart)
-let PADGLOBVARS = {}, PADVARS = {};	// 変数バッファ
-let FullCommand = '';	// コマンドの全文が入る
+let __INTERNAL__FullCommandLine___ = '';	// コマンドの全文が入る
 
 // 【筑前煮】実行前ルーチン (EventHandler)
 function PADStart() {
 	try {
 		let start = new Date();
-		RunPAD(document.getElementById('MAIN'));
+		let __INTERNAL__ValueReturnsPADProgram__ = __INTERNAL__function__RunPAD__(document.getElementById('MAIN'));
 		PrintErr('(実行時間: ' + (new Date() - start) + '[ms])\n');
+		PrintErr('終了値: ' + __INTERNAL__ValueReturnsPADProgram__ + '\n');
 		PrintErr('================\n\n');
 	}
 	catch (e) {
-		PrintErr(e + ' (' + FullCommand + ')\n');
+		PrintErr(e + ' (' + __INTERNAL__FullCommandLine___ + ')\n');
 		PrintErr('プログラムは中断されました.\n\n');
-		PrintErr('PADVARS:\n');
-		Object.keys(PADVARS).forEach(function (key) {
-			let val = PADVARS[key];
-			PrintErr('\t' + key.slice(0, -3) + ' : (' + val + ')\n');
-		});
-		PrintErr('\nPADGLOBVARS:\n');
-		Object.keys(PADGLOBVARS).forEach(function (key) {
-			let val = PADGLOBVARS[key];
-			PrintErr('\t' + key.slice(0, -3) + ' : (' + val + ')\n');
-		});
 		return 'error';
 	}
 
 }
 
-function RunPAD(PAD, n = 0) {
-	if (n === 0) {
+function __INTERNAL__function__RunPAD__(__INTERNAL__PADHTMLElement__, __INTERNAL__NestDapth__ = 0) {
+	if (__INTERNAL__NestDapth__ === 0) {
 		IOInit();
 	}
 
-	for (let i = 0; i < PAD.children.length; i++) {
+	for (let __INTERNAL__PADElementNumber__ = 0; __INTERNAL__PADElementNumber__ < __INTERNAL__PADHTMLElement__.children.length; __INTERNAL__PADElementNumber__++) {
 		// 前判定ループ
-		if (PAD.children.item(i).classList.contains('WhlBlk')) {
-			FullCommand = PAD.children.item(i).textContent;
+		if (__INTERNAL__PADHTMLElement__.children.item(__INTERNAL__PADElementNumber__).classList.contains('WhlBlk')) {
+			__INTERNAL__FullCommandLine___ = __INTERNAL__PADHTMLElement__.children.item(__INTERNAL__PADElementNumber__).textContent;
 
-			while (eval(FullCommand)) {
-				let WHL = PAD.children.item(i + 1);
-				let res = RunPAD(WHL, n + 1);
+			while (eval(__INTERNAL__FullCommandLine___)) {
+				let WHL = __INTERNAL__PADHTMLElement__.children.item(__INTERNAL__PADElementNumber__ + 1);
+				let res = __INTERNAL__function__RunPAD__(WHL, __INTERNAL__NestDapth__ + 1);
 				if (res === 'break') break;
 				if (res === 'continue') continue;
 				if (res === 'error') return 'error';
@@ -48,55 +38,60 @@ function RunPAD(PAD, n = 0) {
 			}
 		}
 		// 後判定ループ
-		if (PAD.children.item(i).classList.contains('DowBlk')) {
-			FullCommand = PAD.children.item(i).textContent;
+		if (__INTERNAL__PADHTMLElement__.children.item(__INTERNAL__PADElementNumber__).classList.contains('DowBlk')) {
+			__INTERNAL__FullCommandLine___ = __INTERNAL__PADHTMLElement__.children.item(__INTERNAL__PADElementNumber__).textContent;
 
 			do {
-				let WHL = PAD.children.item(i + 1);
-				let res = RunPAD(WHL, n + 1);
+				let WHL = __INTERNAL__PADHTMLElement__.children.item(__INTERNAL__PADElementNumber__ + 1);
+				let res = __INTERNAL__function__RunPAD__(WHL, __INTERNAL__NestDapth__ + 1);
 				if (res === 'break') break;
 				if (res === 'continue') continue;
 				if (res === 'error') return 'error';
 				if (res === 'return') return 'return';
-			} while (eval(FullCommand));
+			} while (eval(__INTERNAL__FullCommandLine___));
 		}
 		// 条件分岐
-		if (PAD.children.item(i).classList.contains('IfBlk')) {
-			FullCommand = PAD.children.item(i).textContent;
+		if (__INTERNAL__PADHTMLElement__.children.item(__INTERNAL__PADElementNumber__).classList.contains('IfBlk')) {
+			__INTERNAL__FullCommandLine___ = __INTERNAL__PADHTMLElement__.children.item(__INTERNAL__PADElementNumber__).textContent;
 
-			let NestBlock = PAD.children.item(i + 1);
+			let NestBlock = __INTERNAL__PADHTMLElement__.children.item(__INTERNAL__PADElementNumber__ + 1);
 			let ThenBlk = NestBlock.getElementsByClassName('BlkBlk')[0];
 			let ElseBlk = NestBlock.getElementsByClassName('BlkBlk')[1];
 
-			if (eval(FullCommand)) {
-				let res = RunPAD(ThenBlk, n + 1);
+			if (eval(__INTERNAL__FullCommandLine___)) {
+				let res = __INTERNAL__function__RunPAD__(ThenBlk, __INTERNAL__NestDapth__ + 1);
 				if (res === 'break' || res === 'continue' || res === 'error' || res === 'return') {
 					return res;
 				}
 			} else {
-				let res = RunPAD(ElseBlk, n + 1);
+				let res = __INTERNAL__function__RunPAD__(ElseBlk, __INTERNAL__NestDapth__ + 1);
 				if (res === 'break' || res === 'continue' || res === 'error' || res === 'return') {
 					return res;
 				}
 			}
 		}
 		// 定期済み処理呼び出し
-		if (PAD.children.item(i).classList.contains('FncBlk')) {
-			let Command = PAD.children.item(i).textContent.split(' ');
-			FullCommand = PAD.children.item(i).textContent;
-			let PREVVARS = JSON.stringify(PADVARS);
-			let res = RunPAD(document.getElementById(Command[0]), -(n + 1));
-			PADVARS = JSON.parse(PREVVARS);
+		if (__INTERNAL__PADHTMLElement__.children.item(__INTERNAL__PADElementNumber__).classList.contains('FncBlk')) {
+			let Command = __INTERNAL__PADHTMLElement__.children.item(__INTERNAL__PADElementNumber__).textContent.split(' ');
+			__INTERNAL__FullCommandLine___ = __INTERNAL__PADHTMLElement__.children.item(__INTERNAL__PADElementNumber__).textContent;
+			let res = __INTERNAL__function__RunPAD__(document.getElementById(Command), -(__INTERNAL__NestDapth__ + 1));
 			if (res === 'error') return res;
 		}
 		// コマンドの処理
-		if (PAD.children.item(i).classList.contains('CmdBlk')) {
-			FullCommand = PAD.children.item(i).textContent;
-			let res = eval(FullCommand);
-			if (res === 'break' || res === 'continue' || res === 'error' || res === 'return') {
-				return res;
+		if (__INTERNAL__PADHTMLElement__.children.item(__INTERNAL__PADElementNumber__).classList.contains('CmdBlk')) {
+			__INTERNAL__FullCommandLine___ = __INTERNAL__PADHTMLElement__.children.item(__INTERNAL__PADElementNumber__).textContent;
+			if (RegExp('^\@').test(__INTERNAL__FullCommandLine___)) {
+				atCommand(__INTERNAL__FullCommandLine___);
+				return 'at';
 			}
+			if (RegExp('^return').test(__INTERNAL__FullCommandLine___)) {
+				return eval(__INTERNAL__FullCommandLine___.split(' ')[1]);
+			}
+			if (RegExp('^break|^continue|^error').test(__INTERNAL__FullCommandLine___)) {
+				return __INTERNAL__FullCommandLine___;
+			}
+			eval(__INTERNAL__FullCommandLine___);
 		}
 	}
-	return 'next';
+	return undefined;
 }
