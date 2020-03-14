@@ -18,6 +18,11 @@ function PADStart() {
 
 }
 
+function __INTERNAL__function__atCommand__(__INTERNAL__arg__FullCommandLine) {
+	PrintOut('@ コマンドは未実装です。');
+	return false;
+}
+
 function __INTERNAL__function__RunPAD__(__INTERNAL__PADHTMLElement__, __INTERNAL__NestDapth__ = 0) {
 	if (__INTERNAL__NestDapth__ === 0) {
 		IOInit();
@@ -81,7 +86,7 @@ function __INTERNAL__function__RunPAD__(__INTERNAL__PADHTMLElement__, __INTERNAL
 		if (__INTERNAL__PADHTMLElement__.children.item(__INTERNAL__PADElementNumber__).classList.contains('CmdBlk')) {
 			__INTERNAL__FullCommandLine___ = __INTERNAL__PADHTMLElement__.children.item(__INTERNAL__PADElementNumber__).textContent;
 			if (RegExp('^\@').test(__INTERNAL__FullCommandLine___)) {
-				atCommand(__INTERNAL__FullCommandLine___);
+				__INTERNAL__function__atCommand__(__INTERNAL__FullCommandLine___);
 				return 'at';
 			}
 			if (RegExp('^return').test(__INTERNAL__FullCommandLine___)) {
