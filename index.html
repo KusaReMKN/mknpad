@@ -5,21 +5,19 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta http-equiv="X-UA-Compatible" content="ie=edge">
-		<title>PAD Editor “エリンギ”</title>
-		<link rel="stylesheet" href="./css/pad.css" type="text/css">
+		<title>PAD Editor β Eryngii</title>
+		<link rel="stylesheet" href="./css/common.css" type="text/css">
 		<script src="./js/createblock.js" defer async></script>
 		<script src="./js/editblock.js" defer async></script>
-		<script src="./js/runpad.js" defer async></script>
-		<script src="./js/saveload.js" defer async></script>
 		<script src="./js/updateblocks.js" defer async></script>
-		<script src="./js/padio.js" defer async></script>
+		<script src="./js/mknpad.js" defer async></script>
 		<link rel="shortcut icon" src="./favicon.ico" type="image/vnd.microsoft.icon">
 	</head>
 
 	<body>
-		<h1>PAD Editor “エリンギ”</h1>
+		<h1>PAD Editor β Eryngii</h1>
 		<span class="i" style="text-decoration: underline;">
-			MKNPAD (0.05.00.αα) since 2019-11-15, Eryngii (0.000.200306.α) since 2020-03-05
+			MKNPAD (0.5.1.200328) since 2019-11-15, Eryngii (1.200328) since 2020-03-05
 		</span>
 		<p>
 			PAD Editor (MKNPAD) は現在開発中です。
@@ -40,11 +38,20 @@
 					PAD のテキストフォントが選択できるようになりました。“視覚効果” をクリックしてフォントを選択してください。
 				</li>
 				<li>
-					function ブロックの挙動が変更になりました:
-					今までこのブロックは関数の動作をエミュレートするものとして扱われていました。
-					本バージョンからは、このブロックを定義済みの処理内容で置換するように実行されます。
-					これは変数のスコープは呼び出し元と定義済み処理で同一であることを意味します。
-					宣言されていない変数を利用すると実行時エラーになるので注意してください。
+					<del>
+						function ブロックの挙動が変更になりました:
+						今までこのブロックは関数の動作をエミュレートするものとして扱われていました。
+						本バージョンからは、このブロックを定義済みの処理内容で置換するように実行されます。
+						これは変数のスコープは呼び出し元と定義済み処理で同一であることを意味します。
+						宣言されていない変数を利用すると実行時エラーになるので注意してください。
+					</del>
+				</li>
+				<li>
+					内部仕様を旧式から移行中です。
+					いくつかの機能は制限されています。
+				</li>
+				<li>
+					PAD の実行環境が PAD Editor のシステムとは別環境で動作するようになりました。
 				</li>
 			</ul>
 		</details>
@@ -58,27 +65,30 @@
 			<label class="BlockPaletteItem">
 				<input type="radio" name="mode" onclick="document.getElementById('blktype').value = 'while'">
 				<div class="WhlBlk_"><code>&nbsp;while</code></div>
-				正常に動作しません!
 			</label>
 			<label class="BlockPaletteItem">
 				<input type="radio" name="mode" onclick="document.getElementById('blktype').value = 'until'">
 				<div class="DowBlk_"><code>until&nbsp;</code></div>
-				正常に動作しません!
 			</label>
 			<label class="BlockPaletteItem">
 				<input type="radio" name="mode" onclick="document.getElementById('blktype').value = 'if'">
 				<div class="IfBlk_"><code>if&nbsp;&nbsp;</code></div>
 			</label>
 			<label class="BlockPaletteItem">
-				<input type="radio" name="mode" onclick="document.getElementById('blktype').value = 'function'">
-				<div class="FncBlk_"><code>function</code></div>
+				<del>
+					<input disabled type="radio" name="mode" onclick="document.getElementById('blktype').value = 'function'">
+					<div class="FncBlk_"><code>function</code></div>
+				</del>
+				<ins>
+					機能は停止されています！
+				</ins>
 			</label>
 			<label class="BlockPaletteItem">
 				<input type="radio" name="mode" onclick="document.getElementById('blktype').value = 'comment'">
 				<div class="CmtBlk_"><code>comment</code></div>
 			</label>
 		</div>
-		<div class="PAD" id="PAD">
+		<div class="PAD" id="pad">
 			<div class="PADTitle">TEST</div><br>
 			<div class="BlkBlk Main" id="MAIN">
 				<div class="FlgBlk Start">Start</div><br>
@@ -87,21 +97,40 @@
 			</div>
 		</div>
 
-		<button onclick="PADStart();" title="Run"><img src="./img/run.svg" alt="Run"></button>
-		<button onclick="SavePAD2File();" title="Save as file"><img src="./img/save.svg" alt="Save"></button>
-		<button onclick="LoadPADfromFile();" title="Open"><img src="./img/open.svg" alt="Open"></button>
-		<button onclick="location.reload(false);" title="Clear"><img src="./img/clear.svg" alt="Clear"></button>
-		<button onclick="document.getElementById('PadOutput').textContent = Pad2Text();" title="Convert PAD to Text">
-			<img src="./img/pad2txt.png" alt="PAD2Text"></button>
-		<button onclick="document.getElementById('PadOutput').textContent = '';" title="Clear Output">
-			<img src="./img/cls.png" alt="cls"></button>
-		<button onclick="GetLibrary();" title="Library"><img src="./img/library.png" alt="Library"></button>
-		<button onclick="Text2Pad(prompt('テキスト形式に変換された PAD のデータを入力してください'));" title="Convert Text to PAD">
-			<img src="./img/txt2pad.png" alt="Text2PAD"></button>
-		<h2>実行結果</h2>
-		<div id="PadOutput" class="tt pre" style="user-select: all;"></div>
-		<h2>エラー情報</h2>
-		<div id="cmdlin" class="tt pre"></div>
+		<div>
+			<button onclick="mknpad.system.pad.run();" title="Run">
+				<img src="./img/run.svg" alt="Run">
+			</button>
+			<button onclick="mknpad.system.file.savePad();" title="Save as file">
+				<img src="./img/save.svg" alt="Save">
+			</button>
+			<button onclick="mknpad.system.file.loadPad();" title="Open">
+				<img src="./img/open.svg" alt="Open">
+			</button>
+			<button onclick="location.reload(false);" title="Clear">
+				<img src="./img/clear.svg" alt="Clear">
+			</button>
+			<button disabled onclick="document.getElementById('PadOutput').textContent = Pad2Text();"
+				title="Convert PAD to Text">
+				<img src="./img/pad2txt.png" alt="PAD2Text">
+			</button>
+			<button disabled onclick="document.getElementById('PadOutput').textContent = '';" title="Clear Output">
+				<img src="./img/cls.png" alt="cls">
+			</button>
+			<button disabled onclick="GetLibrary();" title="Library">
+				<img src="./img/library.png" alt="Library">
+			</button>
+			<button disabled onclick="Text2Pad(prompt('テキスト形式に変換された PAD のデータを入力してください'));" title="Convert Text to PAD">
+				<img src="./img/txt2pad.png" alt="Text2PAD">
+			</button>
+		</div>
+
+		<div>
+			<h2>padout (new)</h2>
+			<div id="padout" class="con" style="user-select: all;"></div>
+			<h2>paderr (new)</h2>
+			<div id="paderr" class="con"></div>
+		</div>
 		<hr>
 		<footer>
 			<div>
@@ -114,8 +143,9 @@
 				</small>
 			</div>
 		</footer>
+
 		<!-- 【筑前煮】独自メニュー -->
-		<div class="MigiMenu" id="MigiMenu">
+		<div class="migiMenu" id="migiMenu">
 			<div id="copyit" class="MenuItem">Copy (Unimplemented)</div>
 			<div id="cutit" class="MenuItem">Cut (Unimplemented)</div>
 			<div id="deleteit" class="MenuItem">Delete</div>
