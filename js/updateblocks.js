@@ -2,15 +2,15 @@
 let SelectedBlock = null;
 let BlockSelected = false;
 
-document.getElementById('PAD').onclick = function () {
+document.getElementById('pad').onclick = function () {
 	if (BlockSelected !== true && SelectedBlock !== null) {
 		SelectedBlock.style.borderStyle = 'solid';
 		SelectedBlock.style.borderWidth = '2px';
 		SelectedBlock = null;
 	}
 	BlockSelected = false;
-	let MigiMenu = document.getElementById('MigiMenu');
-	MigiMenu.style.display = 'none';
+	let migiMenu = document.getElementById('migiMenu');
+	migiMenu.style.display = 'none';
 }
 
 // 【筑前煮】クリックによってブロックを選択する
@@ -35,22 +35,22 @@ function ClickRight(e) {
 	this.style.borderStyle = 'double';
 	this.style.borderWidth = '3px';
 
-	let MigiMenu = document.getElementById('MigiMenu');
-	MigiMenu.style.display = 'block';
-	MigiMenu.style.top = (this.getBoundingClientRect().top + window.pageYOffset + this.clientHeight) + 'px';
-	MigiMenu.style.left = (this.getBoundingClientRect().left + window.pageXOffset + this.clientWidth) + 'px';
+	let migiMenu = document.getElementById('migiMenu');
+	migiMenu.style.display = 'block';
+	migiMenu.style.top = (this.getBoundingClientRect().top + window.pageYOffset + this.clientHeight) + 'px';
+	migiMenu.style.left = (this.getBoundingClientRect().left + window.pageXOffset + this.clientWidth) + 'px';
 
 	let foo = this;
 
 	document.getElementById('copyit').onclick = function () {
 		BlockSelected = false;
-		let MigiMenu = document.getElementById('MigiMenu');
-		MigiMenu.style.display = 'none';
+		let migiMenu = document.getElementById('migiMenu');
+		migiMenu.style.display = 'none';
 	};
 	document.getElementById('cutit').onclick = function () {
 		BlockSelected = false;
-		let MigiMenu = document.getElementById('MigiMenu');
-		MigiMenu.style.display = 'none';
+		let migiMenu = document.getElementById('migiMenu');
+		migiMenu.style.display = 'none';
 	};
 	document.getElementById('deleteit').onclick = function () {
 		console.log(foo);
@@ -64,13 +64,13 @@ function ClickRight(e) {
 		UpdateBlocks();
 
 		BlockSelected = false;
-		let MigiMenu = document.getElementById('MigiMenu');
-		MigiMenu.style.display = 'none';
+		let migiMenu = document.getElementById('migiMenu');
+		migiMenu.style.display = 'none';
 	};
 	document.getElementById('editit').onclick = function () {
 		BlockSelected = false;
-		let MigiMenu = document.getElementById('MigiMenu');
-		MigiMenu.style.display = 'none';
+		let migiMenu = document.getElementById('migiMenu');
+		migiMenu.style.display = 'none';
 
 		let evt = new MouseEvent("dblclick", { bubbles: true, cancelable: true, view: window });
 		foo.dispatchEvent(evt);

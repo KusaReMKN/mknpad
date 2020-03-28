@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>MKNPAD DEV</title>
+		<link rel="stylesheet" type="text/css" href="./css/common.css">
+		<script src="./js/mknpad.js"></script>
+	</head>
+
+	<body>
+		<h1>MKNPAD DEV CONSOLE</h1>
+		<h2>pad</h2>
+		<div id="pad">
+			<div class="CmdBlk">@import stdio</div>
+			<div class="CmdBlk">let i = 0</div>
+			<div class="WhlBlk">i !== 10</div>
+			<div class="BlkBlk">
+				<div class="CmdBlk">mknpad.api.printOut('i: ' + i.toString() + '\n')</div>
+				<div class="CmdBlk">i++</div>
+			</div>
+		</div>
+		<h2>code</h2>
+		<form name="mknpad">
+			<textarea id="code" name="code" rows="16" class="con"></textarea>
+			<input type="button" value="RUN" id="run">
+		</form>
+		<h2>padout</h2>
+		<div id="padout" class="con">padout</div>
+		<h2>paderr</h2>
+		<div id="paderr" class="con">paderr</div>
+		<script>
+			document.getElementById('run').addEventListener('click', () => {
+				try {
+					mknpad.boot();
+					window.eval(document.forms.mknpad.code.value);
+				} catch (e) {
+					mknpad.api.printErr(e);
+				}
+			});
+		</script>
+	</body>
+
+</html>
