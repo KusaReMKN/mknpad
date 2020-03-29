@@ -2,15 +2,15 @@
 let SelectedBlock = null;
 let BlockSelected = false;
 
-document.getElementById('PAD').onclick = function () {
+document.getElementById('pad').onclick = function () {
 	if (BlockSelected !== true && SelectedBlock !== null) {
 		SelectedBlock.style.borderStyle = 'solid';
 		SelectedBlock.style.borderWidth = '2px';
 		SelectedBlock = null;
 	}
 	BlockSelected = false;
-	let MigiMenu = document.getElementById('MigiMenu');
-	MigiMenu.style.display = 'none';
+	let migiMenu = document.getElementById('migiMenu');
+	migiMenu.style.display = 'none';
 }
 
 // 【筑前煮】クリックによってブロックを選択する
@@ -35,22 +35,22 @@ function ClickRight(e) {
 	this.style.borderStyle = 'double';
 	this.style.borderWidth = '3px';
 
-	let MigiMenu = document.getElementById('MigiMenu');
-	MigiMenu.style.display = 'block';
-	MigiMenu.style.top = (this.getBoundingClientRect().top + window.pageYOffset + this.clientHeight) + 'px';
-	MigiMenu.style.left = (this.getBoundingClientRect().left + window.pageXOffset + this.clientWidth) + 'px';
+	let migiMenu = document.getElementById('migiMenu');
+	migiMenu.style.display = 'block';
+	migiMenu.style.top = (this.getBoundingClientRect().top + window.pageYOffset + this.clientHeight) + 'px';
+	migiMenu.style.left = (this.getBoundingClientRect().left + window.pageXOffset + this.clientWidth) + 'px';
 
 	let foo = this;
 
 	document.getElementById('copyit').onclick = function () {
 		BlockSelected = false;
-		let MigiMenu = document.getElementById('MigiMenu');
-		MigiMenu.style.display = 'none';
+		let migiMenu = document.getElementById('migiMenu');
+		migiMenu.style.display = 'none';
 	};
 	document.getElementById('cutit').onclick = function () {
 		BlockSelected = false;
-		let MigiMenu = document.getElementById('MigiMenu');
-		MigiMenu.style.display = 'none';
+		let migiMenu = document.getElementById('migiMenu');
+		migiMenu.style.display = 'none';
 	};
 	document.getElementById('deleteit').onclick = function () {
 		console.log(foo);
@@ -64,13 +64,13 @@ function ClickRight(e) {
 		UpdateBlocks();
 
 		BlockSelected = false;
-		let MigiMenu = document.getElementById('MigiMenu');
-		MigiMenu.style.display = 'none';
+		let migiMenu = document.getElementById('migiMenu');
+		migiMenu.style.display = 'none';
 	};
 	document.getElementById('editit').onclick = function () {
 		BlockSelected = false;
-		let MigiMenu = document.getElementById('MigiMenu');
-		MigiMenu.style.display = 'none';
+		let migiMenu = document.getElementById('migiMenu');
+		migiMenu.style.display = 'none';
 
 		let evt = new MouseEvent("dblclick", { bubbles: true, cancelable: true, view: window });
 		foo.dispatchEvent(evt);
@@ -81,52 +81,12 @@ function ClickRight(e) {
 // ブロックに触った時のイベントを付ける
 // ついでに連続した空ブロックを殺す
 function UpdateBlocks(t = 0) {
-	// 	連続したエンプティブロックの削除
-	let BlockBlocks = document.getElementsByClassName('BlkBlk');
-	for (let i = 0; i < BlockBlocks.length; i++) {
-		let BlockDivs = BlockBlocks[i].getElementsByTagName('div');
-		let DoubleEnptyBlock = false;
-		for (let j = 0; j < BlockDivs.length; j++) {
-			if (BlockDivs[j].classList.contains('EmpBlk') === true) {
-				if (DoubleEnptyBlock === true) {
-					BlockDivs[j].parentNode.removeChild(BlockDivs[j]);
-					DoubleEnptyBlock = false;
-				} else {
-					DoubleEnptyBlock = true;
-				}
-			}
-			else {
-				DoubleEnptyBlock = false;
-			}
-		}
-		// 連続した <br> を消す
-		let AllTags = BlockBlocks[i].childNodes;
-		let DoubleBrTag = false;
-		let PrevBr;
-		for (let j = 0; j < AllTags.length; j++) {
-			if (AllTags[j].tagName) {
-				if (AllTags[j].tagName.toLowerCase() === 'br') {
-					if (DoubleBrTag === true) {
-						AllTags[j].parentNode.removeChild(AllTags[j]);
-						PrevBr.parentNode.removeChild(PrevBr);
-						DoubleBrTag = false;
-					} else {
-						PrevBr = AllTags[j]
-						DoubleBrTag = true;
-					}
-				}
-				else {
-					DoubleBrTag = false;
-				}
-			}
-		}
-	}
-
+	mknpad.system.block.internal.trimEmptyBlock();
 	// エンプティブロックに追加のルーチンを追加
 	let EmptyBlocks = document.getElementsByClassName('EmpBlk');
 	for (let i = 0; i < EmptyBlocks.length; i++) {
 		EmptyBlocks[i].onclick = function (e) {
-			CreateBlock(this);
+			mknpad.system.block.create(this);
 		};
 	}
 
