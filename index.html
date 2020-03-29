@@ -5,27 +5,45 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta http-equiv="X-UA-Compatible" content="ie=edge">
-		<title>PAD Editor “エリンギ”</title>
-		<link rel="stylesheet" href="./css/pad.css" type="text/css">
-		<script src="./js/createblock.js" defer async></script>
+		<title>PAD Editor β Eryngii</title>
+		<link rel="stylesheet" href="./css/common.css" type="text/css">
+		<script src="./js/mknpad.js" defer async></script>
 		<script src="./js/editblock.js" defer async></script>
-		<script src="./js/runpad.js" defer async></script>
-		<script src="./js/saveload.js" defer async></script>
 		<script src="./js/updateblocks.js" defer async></script>
-		<script src="./js/padio.js" defer async></script>
 		<link rel="shortcut icon" src="./favicon.ico" type="image/vnd.microsoft.icon">
 	</head>
 
 	<body>
-		<h1>PAD Editor “エリンギ”</h1>
-		<span class="i" style="text-decoration: underline;">
-			MKNPAD (0.05.00.αα) since 2019-11-15, Eryngii (0.000.200306.α) since 2020-03-05
-		</span>
-		<p>
-			PAD Editor (MKNPAD) は現在開発中です。
-			機能の一部は予告なしに変更される恐れがあります。
-			<strong>Internet Explorer と Microsoft Edge (EdgeHTML) では一部、もしくは全部の機能が利用できません。</strong>
-		</p>
+		<h1>PAD Editor β Eryngii</h1>
+		<div>
+			<!-- <span class="i" style="text-decoration: underline; font-size: small;">
+				MKNPAD (0.5.1.200328) since 2019-11-15, Eryngii (1.200328) since 2020-03-05
+			</span> -->
+			<p>ドキュメントは <a href="https://memo.kusaremkn.com/mknpad/">https://memo.kusaremkn.com/mknpad/</a> を参照してください。 </p>
+		</div>
+		<details>
+			<summary>LICENSE</summary>
+			<p>
+				Copyright © 2019–2020 KusaReMKN
+			</p>
+			<p>
+				Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+				documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+				the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+				to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+			</p>
+			<p>
+				The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+				the Software.
+			</p>
+			<p>
+				THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+				THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+				AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+				CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+				DEALINGS IN THE SOFTWARE.
+			</p>
+		</details>
 		<details>
 			<summary>PAD Editor Eryngii リリースノート</summary>
 			<p style="font-size: xx-large; font-weight: bold; text-align: center; color: red;">
@@ -37,14 +55,14 @@
 					PAD Sim 時代から引き継がれていた古の関数 “RUN” が消滅し、天高く羽ばたけるようになりました。
 				</li>
 				<li>
-					PAD のテキストフォントが選択できるようになりました。“視覚効果” をクリックしてフォントを選択してください。
+					内部仕様を旧式から移行中です。
+					いくつかの機能は制限されています。
 				</li>
 				<li>
-					function ブロックの挙動が変更になりました:
-					今までこのブロックは関数の動作をエミュレートするものとして扱われていました。
-					本バージョンからは、このブロックを定義済みの処理内容で置換するように実行されます。
-					これは変数のスコープは呼び出し元と定義済み処理で同一であることを意味します。
-					宣言されていない変数を利用すると実行時エラーになるので注意してください。
+					<del>
+						PAD の実行環境が PAD Editor のシステムとは別環境で動作するようになりました。
+					</del>
+					<ins>子が固まると親も固まるけどちゃんと復帰すれば親は復活できるっぽい</ins>
 				</li>
 			</ul>
 		</details>
@@ -58,27 +76,28 @@
 			<label class="BlockPaletteItem">
 				<input type="radio" name="mode" onclick="document.getElementById('blktype').value = 'while'">
 				<div class="WhlBlk_"><code>&nbsp;while</code></div>
-				正常に動作しません!
 			</label>
 			<label class="BlockPaletteItem">
 				<input type="radio" name="mode" onclick="document.getElementById('blktype').value = 'until'">
 				<div class="DowBlk_"><code>until&nbsp;</code></div>
-				正常に動作しません!
 			</label>
 			<label class="BlockPaletteItem">
 				<input type="radio" name="mode" onclick="document.getElementById('blktype').value = 'if'">
 				<div class="IfBlk_"><code>if&nbsp;&nbsp;</code></div>
 			</label>
 			<label class="BlockPaletteItem">
-				<input type="radio" name="mode" onclick="document.getElementById('blktype').value = 'function'">
-				<div class="FncBlk_"><code>function</code></div>
+				<input disabled type="radio" name="mode" onclick="document.getElementById('blktype').value = 'function'">
+				<div class="FncBlk_"><code><del>function</del></code></div>
+				<ins>
+					機能は停止されています！
+				</ins>
 			</label>
 			<label class="BlockPaletteItem">
 				<input type="radio" name="mode" onclick="document.getElementById('blktype').value = 'comment'">
 				<div class="CmtBlk_"><code>comment</code></div>
 			</label>
 		</div>
-		<div class="PAD" id="PAD">
+		<div class="PAD" id="pad">
 			<div class="PADTitle">TEST</div><br>
 			<div class="BlkBlk Main" id="MAIN">
 				<div class="FlgBlk Start">Start</div><br>
@@ -87,143 +106,57 @@
 			</div>
 		</div>
 
-		<button onclick="PADStart();" title="Run"><img src="./img/run.svg" alt="Run"></button>
-		<button onclick="SavePAD2File();" title="Save as file"><img src="./img/save.svg" alt="Save"></button>
-		<button onclick="LoadPADfromFile();" title="Open"><img src="./img/open.svg" alt="Open"></button>
-		<button onclick="location.reload(false);" title="Clear"><img src="./img/clear.svg" alt="Clear"></button>
-		<button onclick="document.getElementById('PadOutput').textContent = Pad2Text();" title="Convert PAD to Text">
-			<img src="./img/pad2txt.png" alt="PAD2Text"></button>
-		<button onclick="document.getElementById('PadOutput').textContent = '';" title="Clear Output">
-			<img src="./img/cls.png" alt="cls"></button>
-		<button onclick="GetLibrary();" title="Library"><img src="./img/library.png" alt="Library"></button>
-		<button onclick="Text2Pad(prompt('テキスト形式に変換された PAD のデータを入力してください'));" title="Convert Text to PAD">
-			<img src="./img/txt2pad.png" alt="Text2PAD"></button>
-		<h2>実行結果</h2>
-		<div id="PadOutput" class="tt pre" style="user-select: all;"></div>
-		<h2>エラー情報</h2>
-		<div id="cmdlin" class="tt pre"></div>
+		<div class="buttons">
+			<button onclick="mknpad.system.pad.run();" title="Run">
+				Run
+			</button>
+			<button onclick="mknpad.system.file.savePad();" title="Save as file">
+				Save
+			</button>
+			<button onclick="mknpad.system.file.loadPad();" title="Open">
+				Open
+			</button>
+			<button onclick="location.reload(false);" title="Clear">
+				Reload
+			</button>
+			<button onclick="mknpad.system.pad.stop();" title="Close Child Window">
+				Close Result
+			</button>
+			<button
+				onclick="mknpad.io.clear(mknpad.dev.out); mknpad.system.pad.compile(); mknpad.api.printOut(mknpad.var.padjs);"
+				title="Compile">
+				Compile
+			</button>
+			<button disabled onclick="document.getElementById('PadOutput').textContent = Pad2Text();"
+				title="Convert PAD to Text">
+				<img src="./img/pad2txt.png" alt="PAD2Text">
+			</button>
+			<button disabled onclick="document.getElementById('PadOutput').textContent = '';" title="Clear Output">
+				<img src="./img/cls.png" alt="cls">
+			</button>
+			<button disabled onclick="GetLibrary();" title="Library">
+				<img src="./img/library.png" alt="Library">
+			</button>
+			<button disabled onclick="Text2Pad(prompt('テキスト形式に変換された PAD のデータを入力してください'));" title="Convert Text to PAD">
+				<img src="./img/txt2pad.png" alt="Text2PAD">
+			</button>
+		</div>
+
+		<div>
+			<h2>padout</h2>
+			<div id="padout" class="con" style="user-select: all;"></div>
+			<h2>paderr</h2>
+			<div id="paderr" class="con"></div>
+		</div>
 		<hr>
-		<footer>
-			<div>
-				[<a href="./PadEditor.pdf">コマンドリファレンス</a>]
-			</div>
-			<div style="text-align: center;">
-				<small>
-					Copyright © 2019–2020 KusaReMKN.
-					<a href="./PadEditor.pdf">諸条件</a>と <a href="https://mkn.kusaremkn.com/mknppl">MKNPPL</a> の下で利用できます。
-				</small>
-			</div>
-		</footer>
+
 		<!-- 【筑前煮】独自メニュー -->
-		<div class="MigiMenu" id="MigiMenu">
+		<div class="migiMenu" id="migiMenu">
 			<div id="copyit" class="MenuItem">Copy (Unimplemented)</div>
 			<div id="cutit" class="MenuItem">Cut (Unimplemented)</div>
 			<div id="deleteit" class="MenuItem">Delete</div>
 			<div id="editit" class="MenuItem">Edit</div>
 		</div>
-		<script>
-			function ChgPADFont(FontFamily) {
-				let PADs = document.getElementsByClassName('PAD');
-				for (let i = 0; i < PADs.length; i++) {
-					PADs[i].style.fontFamily = '\'' + FontFamily + '\', monospace';
-				}
-				let codes = document.getElementsByTagName('code');
-				for (let i = 0; i < codes.length; i++) {
-					codes[i].style.fontFamily = '\'' + FontFamily + '\', monospace';
-				}
-				let tts = document.getElementsByClassName('tt');
-				for (let i = 0; i < tts.length; i++) {
-					tts[i].style.fontFamily = '\'' + FontFamily + '\', monospace';
-				}
-
-			}
-		</script>
-		<details>
-			<summary>視覚効果</summary>
-			<form>
-				<fieldset>
-					<legend>フォント</legend>
-					<div>
-						<label class="Cousine">
-							<input type="radio" name="font" id="Cousine" onclick="ChgPADFont('Cousine');">
-							Cousine (Web Font)
-						</label>
-					</div>
-					<div>
-						<label class="Inconsolata">
-							<input type="radio" name="font" id="Inconsolata" onclick="ChgPADFont('Inconsolata');">
-							Inconsolata (Web Font)
-						</label>
-					</div>
-					<div>
-						<label class="IBMPlexMono">
-							<input type="radio" name="font" id="IBMPlexMono" onclick="ChgPADFont('IBM Plex Mono');">
-							IBM Plex Mono (Web Font)
-						</label>
-					</div>
-					<div>
-						<label class="CourierPrime">
-							<input type="radio" name="font" id="CourierPrime" onclick="ChgPADFont('Courier Prime');">
-							Courier Prime (Web Font)
-						</label>
-					</div>
-					<div>
-						<label class="FiraMono">
-							<input type="radio" name="font" id="FiraMono" onclick="ChgPADFont('Fira Mono');">
-							Fira Mono (Web Font)
-						</label>
-					</div>
-					<div>
-						<label class="OxygenMono">
-							<input type="radio" name="font" id="OxygenMono" onclick="ChgPADFont('Oxygen Mono');">
-							Oxygen Mono (Web Font)
-						</label>
-					</div>
-					<div>
-						<label class="FiraCode">
-							<input type="radio" name="font" id="FiraCode" onclick="ChgPADFont('Fira Code');">
-							Fira Code (Web Font)
-						</label>
-					</div>
-					<div>
-						<label class="RobotoMono">
-							<input type="radio" name="font" id="RobotoMono" onclick="ChgPADFont('Roboto Mono');">
-							Roboto Mono (Web Font)
-						</label>
-					</div>
-					<div>
-						<label class="SourceCodePro">
-							<input type="radio" name="font" id="SourceCodePro" onclick="ChgPADFont('Source Code Pro');">
-							Source Code Pro (Web Font)
-						</label>
-					</div>
-					<div>
-						<label class="UbuntuMono">
-							<input type="radio" name="font" id="UbuntuMono" onclick="ChgPADFont('Ubuntu Mono');">
-							Ubuntu Mono (Web Font)
-						</label>
-					</div>
-					<div>
-						<label class="CourierNew">
-							<input type="radio" name="font" id="CourierNew" onclick="ChgPADFont('Courier New');">
-							Courier New
-						</label>
-					</div>
-					<div>
-						<label class="Courier">
-							<input type="radio" name="font" id="CourierNew" onclick="ChgPADFont('Courier');">
-							Courier
-						</label>
-					</div>
-					<div>
-						<label class="Consolas">
-							<input type="radio" name="font" id="CourierNew" onclick="ChgPADFont('Consolas');">
-							Consolas
-						</label>
-					</div>
-				</fieldset>
-			</form>
-		</details>
 	</body>
 
 </html>
