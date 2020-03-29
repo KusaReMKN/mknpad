@@ -5,12 +5,16 @@
 	box-sizing: border-box;
 	padding: 1em;
 	width: 100%;
-	resize: vertical;
+	max-height: 16em;
 
-	white-space: pre-wrap;
+	overflow-y: hidden;
+	overflow-x: scroll;
+	scrollbar-width: none;
 
-	background: black;
-	color: white;
+	white-space: pre;
+
+	background-color: #111;
+	color: #eee;
 
 	font-family: monospace;
 
@@ -18,8 +22,19 @@
 	border-radius: 5px;
 }
 
+.con::-webkit-scrollbar {
+	display: none;
+}
+
+.buttons button {
+	width: 5em;
+	height: 3em;
+	text-align: center;
+	vertical-align: middle;
+}
+
 * {
-	box-sizing: border-box;
+	/* box-sizing: border-box; */
 }
 
 body {

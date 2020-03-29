@@ -258,4 +258,6 @@ let mknpad = {
 		document.body.appendChild(mainjs);
 	}
 };
-window.addEventListener('load', mknpad.boot);
+window.addEventListener('load', () => {
+	setTimeout(mknpad.boot, 3000);
+});

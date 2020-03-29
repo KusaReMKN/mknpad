@@ -81,52 +81,12 @@ function ClickRight(e) {
 // ブロックに触った時のイベントを付ける
 // ついでに連続した空ブロックを殺す
 function UpdateBlocks(t = 0) {
-	// 	連続したエンプティブロックの削除
-	let BlockBlocks = document.getElementsByClassName('BlkBlk');
-	for (let i = 0; i < BlockBlocks.length; i++) {
-		let BlockDivs = BlockBlocks[i].getElementsByTagName('div');
-		let DoubleEnptyBlock = false;
-		for (let j = 0; j < BlockDivs.length; j++) {
-			if (BlockDivs[j].classList.contains('EmpBlk') === true) {
-				if (DoubleEnptyBlock === true) {
-					BlockDivs[j].parentNode.removeChild(BlockDivs[j]);
-					DoubleEnptyBlock = false;
-				} else {
-					DoubleEnptyBlock = true;
-				}
-			}
-			else {
-				DoubleEnptyBlock = false;
-			}
-		}
-		// 連続した <br> を消す
-		let AllTags = BlockBlocks[i].childNodes;
-		let DoubleBrTag = false;
-		let PrevBr;
-		for (let j = 0; j < AllTags.length; j++) {
-			if (AllTags[j].tagName) {
-				if (AllTags[j].tagName.toLowerCase() === 'br') {
-					if (DoubleBrTag === true) {
-						AllTags[j].parentNode.removeChild(AllTags[j]);
-						PrevBr.parentNode.removeChild(PrevBr);
-						DoubleBrTag = false;
-					} else {
-						PrevBr = AllTags[j]
-						DoubleBrTag = true;
-					}
-				}
-				else {
-					DoubleBrTag = false;
-				}
-			}
-		}
-	}
-
+	mknpad.system.block.internal.trimEmptyBlock();
 	// エンプティブロックに追加のルーチンを追加
 	let EmptyBlocks = document.getElementsByClassName('EmpBlk');
 	for (let i = 0; i < EmptyBlocks.length; i++) {
 		EmptyBlocks[i].onclick = function (e) {
-			CreateBlock(this);
+			mknpad.system.block.create(this);
 		};
 	}
 
