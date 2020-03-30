@@ -1,9 +1,9 @@
 let mknpad = {
 
 	const: {
-		version: '0.5.1.200330',
-		versionString: 'PAD Editor β Eryngii 1.200330',
-		internalName: 'MKNPAD.Eryngii.0.5',
+		version: '0.5.2.200330',
+		versionString: 'PAD Editor Eryngii 2.200330',
+		internalName: 'MKNPAD.5.2.200330',
 		mknpadFileExtension: '.mknpad',
 		mknpadFileType: 'application/x.mknpad+json',
 		blocks: {
@@ -21,21 +21,23 @@ let mknpad = {
 		},
 		win: {
 			name: 'MKNPADWIN',
-			option: 'dialog=yes,width=800,height=600,alwaysRaised=yes',
+			option: 'width=1024,height=720,chrome=yes',
 		}
 	},
 
 	var: {
 		padjs: '',
 		importErrorCount: 0,
+		selectedBlock: undefined,
 	},
 
 	dev: {	// 入出力 HTMLElement
 		err: undefined,	// エラー出力先
 		out: undefined,	// 標準出力先
 		pad: undefined, // PAD の配置場所
-		run: undefined,	// PAD の実行結果表示ウィンドウ
+		run: undefined,	// PAD の実行結果表示ウィンドウ (window 型)
 		blockType: undefined,	// blockType 記憶の Input
+		context: undefined,	// 右クリックで表示されるメニュー
 	},
 
 	io: {	// 汎用入出力関数
@@ -100,15 +102,14 @@ let mknpad = {
 
 			mknpad.dev.blockType = document.getElementById('blktype');
 
+			mknpad.dev.context = document.getElementById('context');
+
 			mknpad.system.console.log('Info: mknpad.init.dev: Done.');
 		},
-		interval() {
-			setInterval(() => {
-				mknpad.system.console.scroll(mknpad.dev.err);
-				mknpad.system.console.scroll(mknpad.dev.out);
-			}, 10);
-			mknpad.system.console.log('Info: mknpad.init.interval: Done.');
-		},
+		handler() {
+			mknpad.dev.pad.onclick = mknpad.system.handler.block.clickPad;
+			mknpad.system.console.log('Info: mknpad.init.handler: Done.');
+		}
 	},
 
 	system: {
@@ -136,6 +137,7 @@ let mknpad = {
 				a.download = 'mknpad_' + Time.getTime() + mknpad.const.mknpadFileExtension;
 				a.click();
 				URL.revokeObjectURL(a.href);
+				mknpad.system.console.log(`Info: Save: File (${a.download})`);
 				return true;
 			},
 			loadPad() {
@@ -151,26 +153,27 @@ let mknpad = {
 							try {
 								fileData = JSON.parse(reader.result);
 							} catch (e) {
-								mknpad.system.console.log(`Error: File (${res.name}) not supported.`);
+								mknpad.system.console.log(`Error: Open: File (${res.name}) not supported.`);
 								return false;
 							}
 							if (fileData.version && fileData.version.split && fileData.version.split('.')[1] === mknpad.const.version.split('.')[1]) {
 								if (fileData.data.length === fileData.dataLength) {
 									mknpad.api.writePad(fileData.data);
-									mknpad.system.console.log(`Info: File (${res.name}) has loaded.`);
+									mknpad.system.console.log(`Info: Open: File (${res.name}) (${res.size} Bytes) version (${fileData.version})`);
+									mknpad.system.block.update();
 									return true;
 								}
 								else {
-									mknpad.system.console.log(`Error: File (${res.name}) is broken.`);
+									mknpad.system.console.log(`Error: Open: File (${res.name}) is broken.`);
 									return false;
 								}
 							} else {
-								mknpad.system.console.log(`Error: File (${res.name}) is unsupported version.`);
+								mknpad.system.console.log(`Error: Open: File (${res.name}) is incompatible. File version (${fileData.version}), requires (${mknpad.const.version})`);
 								return false;
 							}
 						}
 						else {
-							mknpad.system.console.log(`Error: File (${res.name}) not supported.`);
+							mknpad.system.console.log(`Error: Open: File (${res.name}) not supported.`);
 							return false;
 						}
 					});
@@ -190,9 +193,45 @@ let mknpad = {
 				mknpad.system.console.log(`Info: @import: ${this.responseURL} [ ${this.status}: ${this.statusText} ]`);
 			},
 			block: {
-				editIt() {
+				internal: {
+					showContext(html: HTMLElement) {
+						mknpad.dev.context.style.display = 'block';
+						mknpad.dev.context.style.top = (html.getBoundingClientRect().top + window.pageYOffset + html.clientHeight) + 'px';
+						mknpad.dev.context.style.left = (html.getBoundingClientRect().left + window.pageXOffset + html.clientWidth) + 'px';
+					},
+					hideContext() {
+						mknpad.dev.context.style.display = 'none';
+					},
+					editit() {
+						mknpad.system.block.edit(this);
+					},
 
 				},
+				clickPad() {
+					mknpad.system.handler.block.internal.hideContext();
+				},
+				context() {
+					mknpad.system.handler.block.internal.showContext(this);
+
+					let foo = this;
+
+					document.getElementById('copyit').onclick = function () {
+						mknpad.system.handler.block.internal.hideContext();
+					};
+					document.getElementById('cutit').onclick = function () {
+						mknpad.system.handler.block.internal.hideContext();
+					};
+					document.getElementById('deleteit').onclick = function () {
+						mknpad.system.handler.block.internal.hideContext();
+						mknpad.system.block.remove(foo);
+
+					};
+					document.getElementById('editit').onclick = function () {
+						mknpad.system.handler.block.internal.hideContext();
+						mknpad.system.block.edit(foo);
+					};
+					return false;
+				}
 			}
 		},
 		pad: {
@@ -262,21 +301,28 @@ let mknpad = {
 			compile() {
 				mknpad.system.console.log('Info: mknpad.system.pad.compile: Start ...');
 				mknpad.var.padjs = '';
+				mknpad.var.importErrorCount = 0;
 				mknpad.system.pad.internal.subCompile(mknpad.dev.pad.getElementsByClassName('Main')[0]);
-				mknpad.system.console.log(mknpad.var.importErrorCount === 0 ?
-					'Info: mknpad.system.pad.compile: Done.' :
-					'Error: mknpad.system.pad.compile: @import Error'
-				);
+				if (mknpad.var.importErrorCount === 0) {
+					mknpad.system.console.log('Info: mknpad.system.pad.compile: Done.');
+					return true;
+				}
+				mknpad.system.console.log('Error: mknpad.system.pad.compile: @import Error');
+				return false;
 			},
 			run() {
 				mknpad.system.console.log('Info: mknpad.system.pad.run: Start ...');
-				mknpad.system.pad.compile();
-				mknpad.var.padjs = `try {\n ${mknpad.var.padjs}}\ncatch (e) {\nmknpad.api.printErr("RUNTIME RERROR: " + e);\n}\n`;
-				let mainURI = encodeURIComponent(mknpad.var.padjs);
-				mknpad.dev.run = window.open('./runtime/?q=' + mainURI, mknpad.const.win.name, mknpad.const.win.option);
-				mknpad.dev.run.focus();
-				mknpad.dev.run.onclose = mknpad.dev.run.stop;
-				mknpad.system.console.log('Info: mknpad.system.pad.run: Done.');
+				if (mknpad.system.pad.compile()) {
+					mknpad.var.padjs = `try {\n ${mknpad.var.padjs}}\ncatch (e) {\nmknpad.api.printErr("RUNTIME RERROR: " + e);\n}\n`;
+					let mainURI = encodeURIComponent(mknpad.var.padjs);
+					mknpad.dev.run = window.open('./runtime/?q=' + mainURI, mknpad.const.win.name, mknpad.const.win.option);
+					mknpad.dev.run.focus();
+					mknpad.dev.run.onclose = mknpad.dev.run.stop;
+					mknpad.system.console.log('Info: mknpad.system.pad.run: Done.');
+					return true;
+				}
+				mknpad.system.console.log('Error: mknpad.system.pad.run: Process aborted.');
+				return false;
 			},
 			stop() {
 				mknpad.dev.run && mknpad.dev.run.close();
@@ -540,8 +586,54 @@ let mknpad = {
 				cmdblk.parentNode.removeChild(cmdblk);
 				mknpad.system.block.update();
 			},
-			update() {
-				UpdateBlocks();
+			update(t = 0) {
+				mknpad.system.block.internal.trimEmptyBlock();
+				// エンプティブロックに追加のルーチンを追加
+				let EmptyBlocks = document.getElementsByClassName('EmpBlk') as HTMLCollectionOf<HTMLElement>;
+				for (let i = 0; i < EmptyBlocks.length; i++) {
+					EmptyBlocks[i].onclick = function (e) {
+						mknpad.system.block.create(EmptyBlocks[i]);
+					};
+				}
+
+				// コマンドブロックに編集のルーチンを追加
+				let CommandBlocks = document.getElementsByClassName('CmdBlk') as HTMLCollectionOf<HTMLElement>;
+				for (let i = 0; i < CommandBlocks.length; i++) {
+					CommandBlocks[i].ondblclick = mknpad.system.handler.block.internal.editit;
+					CommandBlocks[i].oncontextmenu = mknpad.system.handler.block.context;
+				}
+				CommandBlocks = document.getElementsByClassName('WhlBlk') as HTMLCollectionOf<HTMLElement>;
+				for (let i = 0; i < CommandBlocks.length; i++) {
+					CommandBlocks[i].ondblclick = mknpad.system.handler.block.internal.editit;
+					CommandBlocks[i].oncontextmenu = mknpad.system.handler.block.context;
+				}
+				CommandBlocks = document.getElementsByClassName('DowBlk') as HTMLCollectionOf<HTMLElement>;
+				for (let i = 0; i < CommandBlocks.length; i++) {
+					CommandBlocks[i].ondblclick = mknpad.system.handler.block.internal.editit;
+					CommandBlocks[i].oncontextmenu = mknpad.system.handler.block.context;
+				}
+				CommandBlocks = document.getElementsByClassName('IfBlk') as HTMLCollectionOf<HTMLElement>;
+				for (let i = 0; i < CommandBlocks.length; i++) {
+					CommandBlocks[i].ondblclick = mknpad.system.handler.block.internal.editit;
+					CommandBlocks[i].oncontextmenu = mknpad.system.handler.block.context;
+				}
+				CommandBlocks = document.getElementsByClassName('PADTitle') as HTMLCollectionOf<HTMLElement>;
+				for (let i = 0; i < CommandBlocks.length; i++) {
+					CommandBlocks[i].ondblclick = mknpad.system.handler.block.internal.editit;
+				}
+				CommandBlocks = document.getElementsByClassName('CmtBlk') as HTMLCollectionOf<HTMLElement>;
+				for (let i = 0; i < CommandBlocks.length; i++) {
+					CommandBlocks[i].ondblclick = mknpad.system.handler.block.internal.editit;
+					CommandBlocks[i].oncontextmenu = mknpad.system.handler.block.context;
+				}
+				CommandBlocks = document.getElementsByClassName('FncBlk') as HTMLCollectionOf<HTMLElement>;
+				for (let i = 0; i < CommandBlocks.length; i++) {
+					CommandBlocks[i].ondblclick = mknpad.system.handler.block.internal.editit;
+					CommandBlocks[i].oncontextmenu = mknpad.system.handler.block.context;
+				}
+				if (t === 0) {
+					mknpad.system.block.update(1);
+				}
 			},
 			create(ClickedEmptyBlock: HTMLElement) {
 				let cmd = window.prompt('Insert a Command Block', '');
@@ -578,18 +670,25 @@ let mknpad = {
 		},
 		console: {
 			scroll(dev: HTMLElement) {
-				dev.scrollBy(0, 10000);
+				dev.scrollBy({ top: dev.scrollHeight, behavior: "smooth" });
 			},
 			log(str: string) {
 				const time = new Date();
 				mknpad.api.printErr(`[${time.toLocaleTimeString()}.${time.getMilliseconds()}] ${str}\n`);
+				mknpad.system.console.scroll(mknpad.dev.err);
+			},
+			showCode() {
+				mknpad.io.clear(mknpad.dev.out);
+				mknpad.system.pad.compile();
+				mknpad.api.printOut(mknpad.var.padjs);
 			}
 		}
 	},
 
 	boot() {
 		mknpad.init.dev();
-		mknpad.init.interval();
+		mknpad.init.handler();
+		mknpad.system.block.update();
 		mknpad.system.console.log('Info: mknpad.boot: Done.');
 		mknpad.system.console.log('');
 		mknpad.system.console.log('*** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ');
@@ -603,7 +702,3 @@ let mknpad = {
 };
 
 mknpad.boot();
-
-function UpdateBlocks() {
-	;
-}
