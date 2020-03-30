@@ -20,6 +20,21 @@ MKNPAD Eryngii では、JavaScript 各ブロックを記述することで PAD E
 
 最新の PAD Editor は [kusaremkn.web.fc2.com](https://kusaremkn.web.fc2.com/) から利用できます。
 
+## ブラウザ
+
+JavaScript (ES2017) を利用します。
+JavaScript を利用できない場合は動作しません。
+
+HTML5 と CSS3 を利用しています。
+対応していない場合は要素が正しく表示されず、正しく動作しない恐れがあります。
+
+推奨ブラウザは、より推奨する順に (カッコ内は動作を確認したバージョンです)
+
+- Mozilla Firefox (74.0 (64 bit))
+- Google Chrome (80.0.3987.194 (64 bit)), Chromium
+- Opera (67.0.3575.115 (64 bit))
+- Microsoft Edge (80.0.361.69 (64 bit))
+
 ## ライセンス
 
 MIT
