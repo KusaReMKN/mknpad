@@ -37,4 +37,6 @@ HTML5 と CSS3 を利用しています。
 
 ## ライセンス
 
-MIT
+現在検討中。
+とりあえず
+All rights reserved.
