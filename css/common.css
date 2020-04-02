@@ -13,13 +13,7 @@
 
 	font-family: monospace;
 
-	border: 3px double gray;
-	border-radius: 5px;
-}
-.con::after {
-	text-align: center;
-	content: '> EOF <';
-	color: #080;
+	border: groove;
 }
 
 * {
@@ -287,56 +281,4 @@ code {
 
 .CmtBlk::after {
 	content: ' */';
-}
-
-.Cousine {
-	font-family: 'Cousine', monospace;
-}
-
-.Inconsolata {
-	font-family: 'Inconsolata', monospace;
-}
-
-.IBMPlexMono {
-	font-family: 'IBM Plex Mono', monospace;
-}
-
-.CourierPrime {
-	font-family: 'Courier Prime', monospace;
-}
-
-.FiraMono {
-	font-family: 'Fira Mono', monospace;
-}
-
-.OxygenMono {
-	font-family: 'Oxygen Mono', monospace;
-}
-
-.FiraCode {
-	font-family: 'Fira Code', monospace;
-}
-
-.RobotoMono {
-	font-family: 'Roboto Mono', monospace;
-}
-
-.SourceCodePro {
-	font-family: 'Source Code Pro', monospace;
-}
-
-.UbuntuMono {
-	font-family: 'Ubuntu Mono', monospace;
-}
-
-.CourierNew {
-	font-family: 'Courier New', monospace;
-}
-
-.Courier {
-	font-family: 'Courier', monospace;
-}
-
-.Consolas {
-	font-family: 'Consolas', monospace;
 }

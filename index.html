@@ -50,16 +50,6 @@
 				<li>
 					PAD Sim 時代から引き継がれていた古の関数 “RUN” が消滅し、天高く羽ばたけるようになりました。
 				</li>
-				<li>
-					内部仕様を旧式から移行中です。
-					いくつかの機能は制限されています。
-				</li>
-				<li>
-					<del>
-						PAD の実行環境が PAD Editor のシステムとは別環境で動作するようになりました。
-					</del>
-					<ins>子が固まると親も固まるけどちゃんと復帰すれば親は復活できるっぽい</ins>
-				</li>
 			</ul>
 		</details>
 		<hr>
@@ -81,13 +71,15 @@
 				<input type="radio" name="mode" onclick="document.getElementById('blktype').value = 'if'">
 				<div class="IfBlk_"><code>if&nbsp;&nbsp;</code></div>
 			</label>
-			<!-- <label class="BlockPaletteItem">
+			<!--
+			<label class="BlockPaletteItem">
 				<input disabled type="radio" name="mode" onclick="document.getElementById('blktype').value = 'function'">
 				<div class="FncBlk_"><code><del>function</del></code></div>
 				<ins>
 					機能は停止されています！
 				</ins>
-			</label> -->
+			</label>
+			-->
 			<label class="BlockPaletteItem">
 				<input type="radio" name="mode" onclick="document.getElementById('blktype').value = 'comment'">
 				<div class="CmtBlk_"><code>comment</code></div>
@@ -124,6 +116,7 @@
 			<button onclick="mknpad.boot();" title="System Restart">
 				System Restart
 			</button>
+			<!--
 			<button disabled onclick="document.getElementById('PadOutput').textContent = Pad2Text();"
 				title="Convert PAD to Text">
 				<img src="./img/pad2txt.png" alt="PAD2Text">
@@ -137,6 +130,7 @@
 			<button disabled onclick="Text2Pad(prompt('テキスト形式に変換された PAD のデータを入力してください'));" title="Convert Text to PAD">
 				<img src="./img/txt2pad.png" alt="Text2PAD">
 			</button>
+			-->
 		</div>
 
 		<div>
@@ -145,7 +139,6 @@
 			<h2>paderr</h2>
 			<div id="paderr" class="con"></div>
 		</div>
-		<hr>
 
 		<!-- 【筑前煮】独自メニュー -->
 		<div class="migiMenu" id="context">
