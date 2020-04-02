@@ -1,10 +1,12 @@
 let mknpad = {
     const: {
-        version: '0.5.2.200330',
-        versionString: 'PAD Editor Eryngii 2.200330',
-        internalName: 'MKNPAD.5.2.200330',
-        mknpadFileExtension: '.mknpad',
-        mknpadFileType: 'application/x.mknpad+json',
+        version: '0.5.2.200402',
+        versionString: 'PAD Editor Eryngii 2.200402',
+        internalName: 'MKNPAD.5.2.200402.{13}',
+        file: {
+            extension: '.mknpad',
+            type: 'application/x.mknpad+json',
+        },
         blocks: {
             whlblk: 'WhlBlk',
             dowblk: 'DowBlk',
@@ -12,21 +14,28 @@ let mknpad = {
             fncblk: 'FncBlk',
             cmdblk: 'CmdBlk',
             blkblk: 'BlkBlk',
+            cmtblk: 'CmtBlk',
         },
         lib: {
             path: './lib/',
-            extension: '.mknpadlib.js',
+            extension: '.mknpad.lib.js',
             type: 'text/javascript',
+            req: {
+                extension: '.mknpad.req.json',
+                type: 'application/json',
+            },
         },
         win: {
             name: 'MKNPADWIN',
-            option: 'width=1024,height=720,chrome=yes',
+            option: `width=1080,height=720,chrome=yes,top=480,left=640`,
         }
     },
     var: {
         padjs: '',
         importErrorCount: 0,
         selectedBlock: undefined,
+        atImportCalled: false,
+        impReqBuf: {},
     },
     dev: {
         err: undefined,
@@ -93,11 +102,43 @@ let mknpad = {
             mknpad.dev.pad = document.getElementById('pad');
             mknpad.dev.blockType = document.getElementById('blktype');
             mknpad.dev.context = document.getElementById('context');
-            mknpad.system.console.log('Info: mknpad.init.dev: Done.');
+            mknpad.system.console.log('dev: [ OK ]');
         },
         handler() {
             mknpad.dev.pad.onclick = mknpad.system.handler.block.clickPad;
-            mknpad.system.console.log('Info: mknpad.init.handler: Done.');
+            mknpad.system.console.log('handler: [ OK ]');
+        },
+        storage() {
+            function storageAvailable(type) {
+                let storage;
+                try {
+                    storage = window[type];
+                    let x = '__storage_test__';
+                    storage.setItem(x, x);
+                    storage.removeItem(x);
+                    return true;
+                }
+                catch (e) {
+                    return e instanceof DOMException && (
+                    // everything except Firefox
+                    e.code === 22 ||
+                        // Firefox
+                        e.code === 1014 ||
+                        // test name field too, because code might not be present
+                        // everything except Firefox
+                        e.name === 'QuotaExceededError' ||
+                        // Firefox
+                        e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
+                        // acknowledge QuotaExceededError only if there's something already stored
+                        (storage && storage.length !== 0);
+                }
+            }
+            if (storageAvailable('localStorage')) {
+                mknpad.system.console.log('Storage: Available.');
+                return true;
+            }
+            mknpad.system.console.error('Storage: Not available.');
+            return false;
         }
     },
     system: {
@@ -110,24 +151,24 @@ let mknpad = {
                 };
                 fileData.dataLength = fileData.data.length;
                 if (!window.Blob) {
-                    mknpad.system.console.log('Error: Your browser does not support Blob.');
+                    mknpad.system.console.error('Save: Your browser does not support Blob.');
                     return false;
                 }
-                let blob = new Blob([JSON.stringify(fileData)], { type: mknpad.const.mknpadFileType });
+                let blob = new Blob([JSON.stringify(fileData)], { type: mknpad.const.file.type });
                 let Time = new Date();
                 let a = document.createElement('a');
                 a.href = URL.createObjectURL(blob);
                 a.target = '_blank';
-                a.download = 'mknpad_' + Time.getTime() + mknpad.const.mknpadFileExtension;
+                a.download = 'mknpad_' + Time.getTime() + mknpad.const.file.extension;
                 a.click();
                 URL.revokeObjectURL(a.href);
-                mknpad.system.console.log(`Info: Save: File (${a.download})`);
+                mknpad.system.console.log(`Save: File (${a.download})`);
                 return true;
             },
             loadPad() {
                 let input = document.createElement('input');
                 input.type = 'file';
-                input.accept = [mknpad.const.mknpadFileExtension, mknpad.const.mknpadFileType].join();
+                input.accept = [mknpad.const.file.extension, mknpad.const.file.type].join();
                 input.addEventListener('change', function () {
                     let res = this.files[0];
                     let reader = new FileReader();
@@ -138,28 +179,28 @@ let mknpad = {
                                 fileData = JSON.parse(reader.result);
                             }
                             catch (e) {
-                                mknpad.system.console.log(`Error: Open: File (${res.name}) not supported.`);
+                                mknpad.system.console.error(`Open: File (${res.name}) not supported.`);
                                 return false;
                             }
                             if (fileData.version && fileData.version.split && fileData.version.split('.')[1] === mknpad.const.version.split('.')[1]) {
                                 if (fileData.data.length === fileData.dataLength) {
                                     mknpad.api.writePad(fileData.data);
-                                    mknpad.system.console.log(`Info: Open: File (${res.name}) (${res.size} Bytes) version (${fileData.version})`);
+                                    mknpad.system.console.log(`Open: File (${res.name}) (${res.size} Bytes) version (${fileData.version})`);
                                     mknpad.system.block.update();
                                     return true;
                                 }
                                 else {
-                                    mknpad.system.console.log(`Error: Open: File (${res.name}) is broken.`);
+                                    mknpad.system.console.error(`Open: File (${res.name}) is broken.`);
                                     return false;
                                 }
                             }
                             else {
-                                mknpad.system.console.log(`Error: Open: File (${res.name}) is incompatible. File version (${fileData.version}), requires (${mknpad.const.version})`);
+                                mknpad.system.console.error(`Open: File (${res.name}) is incompatible. File version (${fileData.version}), requires (${mknpad.const.version})`);
                                 return false;
                             }
                         }
                         else {
-                            mknpad.system.console.log(`Error: Open: File (${res.name}) not supported.`);
+                            mknpad.system.console.error(`Open: File (${res.name}) not supported.`);
                             return false;
                         }
                     });
@@ -176,7 +217,7 @@ let mknpad = {
                 else {
                     mknpad.var.importErrorCount++;
                 }
-                mknpad.system.console.log(`Info: @import: ${this.responseURL} [ ${this.status}: ${this.statusText} ]`);
+                (this.status === 200 ? mknpad.system.console.log : mknpad.system.console.error)(`\t${this.responseURL}\t[ ${this.status}: ${this.statusText} ]`);
             },
             block: {
                 internal: {
@@ -244,21 +285,95 @@ let mknpad = {
                             mknpad.system.pad.internal.subCompile(elsePad, n + 1);
                             mknpad.var.padjs += '}\n';
                         }
+                        if (block.classList.contains(mknpad.const.blocks.cmtblk)) {
+                            mknpad.var.padjs += '/* ' + block.textContent + ' */\n';
+                        }
+                        // 通常ブロック
                         if (block.classList.contains(mknpad.const.blocks.cmdblk)) {
                             if (RegExp(/^@/).test(block.textContent)) {
-                                mknpad.system.pad.internal.atCommand(block.textContent);
+                                if (!mknpad.system.pad.internal.atCommand(block.textContent)) {
+                                    return false;
+                                }
+                                ;
                             }
                             else {
                                 mknpad.var.padjs += block.textContent + ';\n';
                             }
                         }
                     }
+                    return true;
+                },
+                reqLoad() {
+                    if (this.status === 200) {
+                        let resData;
+                        try {
+                            resData = JSON.parse(this.responseText);
+                        }
+                        catch (e) {
+                            mknpad.system.console.error(`\t${this.responseURL}\t[ ${this.status}: ${this.statusText} ]`);
+                            mknpad.system.console.error(`\t\tIncorrect File Format.`);
+                            return;
+                        }
+                        if (resData.version.split('.')[1] === mknpad.const.version.split('.')[1]) {
+                            for (let i = 0; i < resData.depend.length; i++) {
+                                if (mknpad.var.impReqBuf[resData.depend[i]] === undefined) {
+                                    mknpad.var.impReqBuf[resData.depend[i]] = true;
+                                }
+                            }
+                            mknpad.system.console.log(`\t${this.responseURL}\t[ ${this.status}: ${this.statusText} ]`);
+                            if (resData.message) {
+                                for (let i = 0; i < resData.message.length; i++) {
+                                    mknpad.system.console.msg(`\t\t${resData.message[i]}`);
+                                }
+                            }
+                        }
+                        else {
+                            mknpad.var.importErrorCount++;
+                            mknpad.system.console.error(`\t${this.responseURL}\t[ ${this.status}: ${this.statusText} ]`);
+                            mknpad.system.console.error(`\t\tIncompatible Version (${resData.version}), requires (${mknpad.const.version})`);
+                            return;
+                        }
+                    }
+                    else {
+                        mknpad.var.importErrorCount++;
+                        mknpad.system.console.error(`\t${this.responseURL}\t[ ${this.status}: ${this.statusText} ]`);
+                    }
                 },
                 atImport(argv) {
+                    mknpad.var.impReqBuf = {};
+                    mknpad.system.console.log('@import: 依存関係を解決しています ...');
+                    // 渡されたライブラリをインポート待ちに追加
                     for (let i = 1; i < argv.length; i++) {
+                        mknpad.var.impReqBuf[argv[i]] = true;
+                    }
+                    let prevLen;
+                    // 依存関係が解決するまでインポートリストを更新
+                    do {
+                        let prevBuf = mknpad.var.impReqBuf;
+                        prevLen = Object.keys(prevBuf).length;
+                        for (let key in prevBuf) {
+                            if (prevBuf[key] === true) {
+                                let req = new XMLHttpRequest();
+                                req.overrideMimeType(mknpad.const.lib.req.type);
+                                req.open('GET', mknpad.const.lib.path + key + mknpad.const.lib.req.extension, false);
+                                req.addEventListener('load', mknpad.system.pad.internal.reqLoad);
+                                req.addEventListener('error', mknpad.system.pad.internal.reqLoad);
+                                req.addEventListener('abort', mknpad.system.pad.internal.reqLoad);
+                                req.send(null);
+                                mknpad.var.impReqBuf[key] = false;
+                            }
+                        }
+                    } while (prevLen !== Object.keys(mknpad.var.impReqBuf).length);
+                    if (mknpad.var.importErrorCount !== 0) {
+                        return;
+                    }
+                    mknpad.system.console.log('@import: ライブラリを取得しています ...');
+                    let reqBufLen = Object.keys(mknpad.var.impReqBuf).length;
+                    for (let i = 0; i < reqBufLen; i++) {
+                        let libName = Object.keys(mknpad.var.impReqBuf)[reqBufLen - i - 1];
                         let req = new XMLHttpRequest();
                         req.overrideMimeType(mknpad.const.lib.type);
-                        req.open('GET', mknpad.const.lib.path + argv[i] + mknpad.const.lib.extension, false);
+                        req.open('GET', mknpad.const.lib.path + libName + mknpad.const.lib.extension, false);
                         req.addEventListener('load', mknpad.system.handler.atImportLoad);
                         req.addEventListener('error', mknpad.system.handler.atImportLoad);
                         req.addEventListener('abort', mknpad.system.handler.atImportLoad);
@@ -270,36 +385,42 @@ let mknpad = {
                     switch (argv[0]) {
                         case '@import':
                             mknpad.system.pad.internal.atImport(argv);
-                            break;
+                            return true;
                         default:
-                            mknpad.system.console.log(`Error: Unknown @ Command: ${argv[0]}`);
+                            mknpad.system.console.error(`atCommand: Unknown @ Command: ${argv[0]}`);
+                            return false;
                     }
                 },
             },
             compile() {
-                mknpad.system.console.log('Info: mknpad.system.pad.compile: Start ...');
+                mknpad.system.console.log('Compile: Starting ...');
                 mknpad.var.padjs = '';
                 mknpad.var.importErrorCount = 0;
-                mknpad.system.pad.internal.subCompile(mknpad.dev.pad.getElementsByClassName('Main')[0]);
+                if (!mknpad.system.pad.internal.subCompile(mknpad.dev.pad.getElementsByClassName('Main')[0])) {
+                    mknpad.system.console.error('Compile: Compiling Error.');
+                    return false;
+                }
                 if (mknpad.var.importErrorCount === 0) {
-                    mknpad.system.console.log('Info: mknpad.system.pad.compile: Done.');
+                    mknpad.system.console.log('Compile: Done.');
                     return true;
                 }
-                mknpad.system.console.log('Error: mknpad.system.pad.compile: @import Error');
+                mknpad.system.console.error('Compile: @import Error');
                 return false;
             },
             run() {
-                mknpad.system.console.log('Info: mknpad.system.pad.run: Start ...');
+                mknpad.system.console.log('Run: Start ...');
                 if (mknpad.system.pad.compile()) {
-                    mknpad.var.padjs = `try {\n ${mknpad.var.padjs}}\ncatch (e) {\nmknpad.api.printErr("RUNTIME RERROR: " + e);\n}\n`;
-                    let mainURI = encodeURIComponent(mknpad.var.padjs);
-                    mknpad.dev.run = window.open('./runtime/?q=' + mainURI, mknpad.const.win.name, mknpad.const.win.option);
+                    if (mknpad.var.padjs.length !== 0) {
+                        mknpad.var.padjs = `try {\ndelete mknpad.boot;\n${mknpad.var.padjs}}\ncatch (e) {\nmknpad.dev.err.textContent += ("RUNTIME RERROR: " + e);\n}\n`;
+                    }
+                    window.localStorage.setItem('padjs', mknpad.var.padjs);
+                    mknpad.dev.run = window.open('./runtime/', mknpad.const.win.name, mknpad.const.win.option);
                     mknpad.dev.run.focus();
                     mknpad.dev.run.onclose = mknpad.dev.run.stop;
-                    mknpad.system.console.log('Info: mknpad.system.pad.run: Done.');
+                    mknpad.system.console.log('Run: Done.');
                     return true;
                 }
-                mknpad.system.console.log('Error: mknpad.system.pad.run: Process aborted.');
+                mknpad.system.console.error('Run: 処理は中断されました.');
                 return false;
             },
             stop() {
@@ -643,29 +764,41 @@ let mknpad = {
             },
             log(str) {
                 const time = new Date();
-                mknpad.api.printErr(`[${time.toLocaleTimeString()}.${time.getMilliseconds()}] ${str}\n`);
+                mknpad.dev.err.innerHTML += `<span>[${time.toLocaleTimeString()}.${time.getMilliseconds()}]\t${str}</span>\n`;
+                mknpad.system.console.scroll(mknpad.dev.err);
+            },
+            msg(str) {
+                const time = new Date();
+                mknpad.dev.err.innerHTML += `<span style="color: #4f4;">[${time.toLocaleTimeString()}.${time.getMilliseconds()}]\t${str}</span>\n`;
+                mknpad.system.console.scroll(mknpad.dev.err);
+            },
+            error(str) {
+                const time = new Date();
+                mknpad.dev.err.innerHTML += `<span style="color: #f44;">[${time.toLocaleTimeString()}.${time.getMilliseconds()}]\t${str}</span>\n`;
                 mknpad.system.console.scroll(mknpad.dev.err);
             },
             showCode() {
                 mknpad.io.clear(mknpad.dev.out);
-                mknpad.system.pad.compile();
-                mknpad.api.printOut(mknpad.var.padjs);
+                if (mknpad.system.pad.compile())
+                    mknpad.api.printOut(mknpad.var.padjs);
             }
         }
     },
     boot() {
         mknpad.init.dev();
         mknpad.init.handler();
+        mknpad.init.storage();
         mknpad.system.block.update();
-        mknpad.system.console.log('Info: mknpad.boot: Done.');
+        mknpad.system.console.log('boot: [ OK ]');
         mknpad.system.console.log('');
-        mknpad.system.console.log('*** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ');
+        mknpad.system.console.msg('*** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ');
+        mknpad.system.console.msg('');
+        mknpad.system.console.msg(`Welcome to ${mknpad.const.versionString} (${mknpad.const.internalName})`);
+        mknpad.system.console.msg('');
+        mknpad.system.console.msg(` - Documentation:\thttps://memo.kusaremkn.com/mknpad/`);
+        mknpad.system.console.msg('');
+        mknpad.system.console.msg('*** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ');
         mknpad.system.console.log('');
-        mknpad.system.console.log(`Welcome to ${mknpad.const.versionString} (${mknpad.const.internalName})`);
-        mknpad.system.console.log('');
-        mknpad.system.console.log(` - Documentation:\thttps://memo.kusaremkn.com/mknpad/`);
-        mknpad.system.console.log('');
-        mknpad.system.console.log('*** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ');
     }
 };
 mknpad.boot();
