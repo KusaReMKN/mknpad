@@ -439,7 +439,7 @@ let mknpad = {
 				mknpad.var.padjs = '';
 				mknpad.var.atImportCalled = false;
 				mknpad.var.importErrorCount = 0;
-				if (!mknpad.system.pad.internal.subCompile(mknpad.dev.pad.getElementsByClassName('Main')[0])) {
+				if (!mknpad.system.pad.internal.subCompile(mknpad.dev.pad.querySelector('.Main'))) {
 					mknpad.system.console.error('Compile: Compiling Error.');
 					return false;
 				}
