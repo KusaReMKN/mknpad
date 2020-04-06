@@ -1,1 +1,1 @@
-tsc --outFile ./js/mknpad.js ./src/mknpad.ts -t ES2017 
+FOR /r %%I IN (./src/*.ts) DO tsc --outFile ./js/%%~nI.js ./src/%%~nI.ts -t ES2017 
