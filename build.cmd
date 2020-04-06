@@ -1,1 +1,1 @@
-tsc --outFile ./js/mknpad.js mknpad.ts -t ES2017 
+tsc --outFile ./js/mknpad.js ./src/mknpad.ts -t ES2017 
