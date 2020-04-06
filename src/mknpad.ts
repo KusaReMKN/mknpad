@@ -164,9 +164,8 @@ let mknpad = {
 				let fileData = {
 					version: mknpad.const.version,
 					data: mknpad.api.padData(),
-					dataLength: undefined,
+					dataLength: mknpad.api.padData().length,
 				};
-				fileData.dataLength = fileData.data.length;
 
 				if (!window.Blob) {
 					mknpad.system.console.error('Save: Your browser does not support Blob.');
