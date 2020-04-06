@@ -1,0 +1,7 @@
+{
+	"version": "0.5.0.0",
+	"depend": [
+		"sys/stdlib/rand",
+		"sys/stdlib/srand"
+	]
+}

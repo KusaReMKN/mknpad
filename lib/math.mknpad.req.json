@@ -1,0 +1,30 @@
+{
+	"version": "0.5.0.0",
+	"depend": [
+		"sys/math/copysign",
+		"sys/math/erf",
+		"sys/math/exp2",
+		"sys/math/fdim",
+		"sys/math/fma",
+		"sys/math/fmod",
+		"sys/math/fpclassify",
+		"sys/math/frexp",
+		"sys/math/gamma",
+		"sys/math/ilogb",
+		"sys/math/isgreater",
+		"sys/math/isinf",
+		"sys/math/isnormal",
+		"sys/math/isunordered",
+		"sys/math/ldexp",
+		"sys/math/logb",
+		"sys/math/modf",
+		"sys/math/nan",
+		"sys/math/nextafter",
+		"sys/math/scalbln",
+		"sys/math/scalbn",
+		"sys/math/signbit"
+	],
+	"message": [
+		"Some function is not implemented."
+	]
+}

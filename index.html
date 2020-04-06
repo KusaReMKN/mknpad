@@ -52,9 +52,37 @@
 				</li>
 			</ul>
 		</details>
+		<details>
+			<summary>簡単な使い方</summary>
+			<ul>
+				<li>ブロックパレットから挿入したいブロックの種類を選びます</li>
+				<li>(Start) と (End) の間にあるような薄い灰色の四角をクリックしてコマンドを入力します</li>
+				<li>コマンドは JavaScript を利用できます (セミコロンを入力する必要はありません)</li>
+				<li>“Run” ボタンを押して PAD で描かれたプログラムを実行できます</li>
+				<li>
+					<code>@import</code> から始まる特殊なコマンドを利用して PAD Editor のライブラリを利用できます (PAD 図の最初に配置して下さい)
+					<ul>
+						<li>構文: <samp>@import [lib [lib [...]]]</samp></li>
+						<li>
+							以下のライブラリが利用できます
+							<ul>
+								<li><code>mknio</code>: 簡易出力関数 <code>print()</code> を利用できます</li>
+								<li><code>math</code>: C の math.h のクローンです (いくつかの関数は実装されていません)</li>
+								<li><code>string</code>: C の string.h のクローンを目指して開発中です</li>
+								<li><code>ctype</code>: C の ctype.h のクローンを目指して開発中です</li>
+								<li><code>sha</code>: <a href="https://github.com/Caligatio/jsSHA">jsSHA</a> を利用できます</li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+
+			</ul>
+
+		</details>
 		<hr>
 		<input type="hidden" id="blktype">
 		<div class="BlockPalette">
+			<div>Block Palette</div>
 			<label class="BlockPaletteItem">
 				<input type="radio" name="mode" onclick="document.getElementById('blktype').value = 'normal'">
 				<div class="CmdBlk_"><code>normal</code></div>

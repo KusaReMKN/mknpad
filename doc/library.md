@@ -1,7 +1,7 @@
 # MKNPAD ライブラリ機能について
 
 MKNPAD のライブラリは `./lib/` に配置されます。
-ライブラリは情報記述ファイルである `*.mknpad.req.json` とライブラリ本体である `*.mkpnad.lib.js` からなります。
+ライブラリは情報記述ファイルである `*.mknpad.req.json` とライブラリ本体である `*.mknpad.lib.js` からなります。
 
 ## js のほう
 
