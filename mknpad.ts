@@ -7,9 +7,9 @@ interface IMPREQBUF {
 let mknpad = {
 
 	const: {
-		version: '0.5.2.200406',
-		versionString: 'PAD Editor Eryngii 2.200406',
-		internalName: 'MKNPAD.5.2.200406.0',
+		version: '0.5.3.1',
+		versionString: 'PAD Editor Eryngii 3.1',
+		internalName: 'MKNPAD.5.3.1',
 		file: {
 			extension: '.mknpad',
 			type: 'application/x.mknpad+json',
