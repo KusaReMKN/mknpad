@@ -1,3 +1,5 @@
+"use strict";
+
 let mknpad = {
 	dev: {
 		err: undefined,

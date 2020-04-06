@@ -1,8 +1,9 @@
+"use strict";
 let mknpad = {
     const: {
-        version: '0.5.2.200402',
-        versionString: 'PAD Editor Eryngii 2.200402',
-        internalName: 'MKNPAD.5.2.200402.{13}',
+        version: '0.5.2.200406',
+        versionString: 'PAD Editor Eryngii 2.200406',
+        internalName: 'MKNPAD.5.2.200406.0',
         file: {
             extension: '.mknpad',
             type: 'application/x.mknpad+json',
@@ -27,7 +28,7 @@ let mknpad = {
         },
         win: {
             name: 'MKNPADWIN',
-            option: `width=1080,height=720,chrome=yes,top=480,left=640`,
+            option: `width=1080,height=720,dialog=yes,top=480,left=640`,
         }
     },
     var: {
@@ -340,52 +341,63 @@ let mknpad = {
                     }
                 },
                 atImport(argv) {
-                    mknpad.var.impReqBuf = {};
-                    mknpad.system.console.log('@import: 依存関係を解決しています ...');
-                    // 渡されたライブラリをインポート待ちに追加
-                    for (let i = 1; i < argv.length; i++) {
-                        mknpad.var.impReqBuf[argv[i]] = true;
-                    }
-                    let prevLen;
-                    // 依存関係が解決するまでインポートリストを更新
-                    do {
-                        let prevBuf = mknpad.var.impReqBuf;
-                        prevLen = Object.keys(prevBuf).length;
-                        for (let key in prevBuf) {
-                            if (prevBuf[key] === true) {
-                                let req = new XMLHttpRequest();
-                                req.overrideMimeType(mknpad.const.lib.req.type);
-                                req.open('GET', mknpad.const.lib.path + key + mknpad.const.lib.req.extension, false);
-                                req.addEventListener('load', mknpad.system.pad.internal.reqLoad);
-                                req.addEventListener('error', mknpad.system.pad.internal.reqLoad);
-                                req.addEventListener('abort', mknpad.system.pad.internal.reqLoad);
-                                req.send(null);
-                                mknpad.var.impReqBuf[key] = false;
-                            }
+                    if (mknpad.var.atImportCalled !== true) {
+                        mknpad.var.impReqBuf = {};
+                        mknpad.system.console.log('@import: 依存関係を解決しています ...');
+                        // 渡されたライブラリをインポート待ちに追加
+                        for (let i = 1; i < argv.length; i++) {
+                            mknpad.var.impReqBuf[argv[i]] = true;
                         }
-                    } while (prevLen !== Object.keys(mknpad.var.impReqBuf).length);
-                    if (mknpad.var.importErrorCount !== 0) {
-                        return;
+                        let prevLen;
+                        // 依存関係が解決するまでインポートリストを更新
+                        do {
+                            let prevBuf = mknpad.var.impReqBuf;
+                            prevLen = Object.keys(prevBuf).length;
+                            for (let key in prevBuf) {
+                                if (prevBuf[key] === true) {
+                                    let req = new XMLHttpRequest();
+                                    req.open('GET', mknpad.const.lib.path + key + mknpad.const.lib.req.extension, false);
+                                    req.overrideMimeType(mknpad.const.lib.req.type);
+                                    // req.setRequestHeader('Pragma', 'no-cache');
+                                    // req.setRequestHeader('Cache-Control', 'no-cache');
+                                    req.addEventListener('load', mknpad.system.pad.internal.reqLoad);
+                                    req.addEventListener('error', mknpad.system.pad.internal.reqLoad);
+                                    req.addEventListener('abort', mknpad.system.pad.internal.reqLoad);
+                                    req.send(null);
+                                    mknpad.var.impReqBuf[key] = false;
+                                }
+                            }
+                        } while (prevLen !== Object.keys(mknpad.var.impReqBuf).length);
+                        if (mknpad.var.importErrorCount !== 0) {
+                            return false;
+                        }
+                        mknpad.system.console.log('@import: ライブラリを取得しています ...');
+                        let reqBufLen = Object.keys(mknpad.var.impReqBuf).length;
+                        for (let i = 0; i < reqBufLen; i++) {
+                            let libName = Object.keys(mknpad.var.impReqBuf)[reqBufLen - i - 1];
+                            let req = new XMLHttpRequest();
+                            req.open('GET', mknpad.const.lib.path + libName + mknpad.const.lib.extension, false);
+                            req.overrideMimeType(mknpad.const.lib.type);
+                            // req.setRequestHeader('Pragma', 'no-cache');
+                            // req.setRequestHeader('Cache-Control', 'no-cache');
+                            req.addEventListener('load', mknpad.system.handler.atImportLoad);
+                            req.addEventListener('error', mknpad.system.handler.atImportLoad);
+                            req.addEventListener('abort', mknpad.system.handler.atImportLoad);
+                            req.send(null);
+                        }
+                        mknpad.var.atImportCalled = true;
+                        return true;
                     }
-                    mknpad.system.console.log('@import: ライブラリを取得しています ...');
-                    let reqBufLen = Object.keys(mknpad.var.impReqBuf).length;
-                    for (let i = 0; i < reqBufLen; i++) {
-                        let libName = Object.keys(mknpad.var.impReqBuf)[reqBufLen - i - 1];
-                        let req = new XMLHttpRequest();
-                        req.overrideMimeType(mknpad.const.lib.type);
-                        req.open('GET', mknpad.const.lib.path + libName + mknpad.const.lib.extension, false);
-                        req.addEventListener('load', mknpad.system.handler.atImportLoad);
-                        req.addEventListener('error', mknpad.system.handler.atImportLoad);
-                        req.addEventListener('abort', mknpad.system.handler.atImportLoad);
-                        req.send(null);
+                    else {
+                        mknpad.system.console.error('@import: @import can be executed only once');
+                        return false;
                     }
                 },
                 atCommand(cmd) {
                     let argv = cmd.split(' ');
                     switch (argv[0]) {
                         case '@import':
-                            mknpad.system.pad.internal.atImport(argv);
-                            return true;
+                            return mknpad.system.pad.internal.atImport(argv);
                         default:
                             mknpad.system.console.error(`atCommand: Unknown @ Command: ${argv[0]}`);
                             return false;
@@ -395,6 +407,7 @@ let mknpad = {
             compile() {
                 mknpad.system.console.log('Compile: Starting ...');
                 mknpad.var.padjs = '';
+                mknpad.var.atImportCalled = false;
                 mknpad.var.importErrorCount = 0;
                 if (!mknpad.system.pad.internal.subCompile(mknpad.dev.pad.getElementsByClassName('Main')[0])) {
                     mknpad.system.console.error('Compile: Compiling Error.');
@@ -411,7 +424,7 @@ let mknpad = {
                 mknpad.system.console.log('Run: Start ...');
                 if (mknpad.system.pad.compile()) {
                     if (mknpad.var.padjs.length !== 0) {
-                        mknpad.var.padjs = `try {\ndelete mknpad.boot;\n${mknpad.var.padjs}}\ncatch (e) {\nmknpad.dev.err.textContent += ("RUNTIME RERROR: " + e);\n}\n`;
+                        mknpad.var.padjs = `"use strict";\ntry {\ndelete mknpad.boot;\n${mknpad.var.padjs}}\ncatch (e) {\nmknpad.dev.err.textContent += ("RUNTIME RERROR: " + e);\n}\n`;
                     }
                     window.localStorage.setItem('padjs', mknpad.var.padjs);
                     mknpad.dev.run = window.open('./runtime/', mknpad.const.win.name, mknpad.const.win.option);

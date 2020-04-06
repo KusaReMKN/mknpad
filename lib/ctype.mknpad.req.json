@@ -1,0 +1,8 @@
+{
+	"version": "0.5.0.0",
+	"depend": [
+		"sys/ctype/isalnum",
+		"sys/ctype/isalpha",
+		"sys/ctype/isdigit"
+	]
+}
