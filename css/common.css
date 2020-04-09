@@ -188,7 +188,7 @@ code {
 .DowBlk_ {
 	position: relative;
 	display: inline-block;
-	vertical-align: top;
+	vertical-align: bottom;
 
 	margin: 1ch auto;
 	padding: 1ch 2em;
