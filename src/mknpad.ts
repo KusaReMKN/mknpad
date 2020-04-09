@@ -102,7 +102,7 @@ let mknpad = {
 		},
 		createPrinter(dev: HTMLElement) {
 			return function (str: string, color: string = 'unset', bgcolor: string = 'unset') {
-				return dev.innerHTML += `<span style="color: ${color}; backgroud-color: ${bgcolor}">${str}</span>`;
+				return dev.innerHTML += `<span style="color: ${color}; background-color: ${bgcolor}">${str}</span>`;
 			}
 		}
 	},
