@@ -775,7 +775,7 @@ let mknpad = {
 				for (let i = 0; i < CommandBlocks.length; i++) {
 					CommandBlocks[i].ondblclick = mknpad.system.handler.block.internal.editit;
 					CommandBlocks[i].oncontextmenu = mknpad.system.handler.block.context;
-					CommandBlocks[i].style.top = (CommandBlocks[i].nextElementSibling.children.item(0).clientHeight - CommandBlocks[i].clientHeight / 2 + CommandBlocks[i].nextElementSibling.children.item(3).clientHeight / 2) + 'px';
+					CommandBlocks[i].style.top = (CommandBlocks[i].nextElementSibling.children.item(0).clientHeight - CommandBlocks[i].clientHeight / 2 + CommandBlocks[i].nextElementSibling.children.item(3).clientHeight / 2 - 2) + 'px';
 				}
 				if (t === 0) {
 					mknpad.system.block.update(1);
