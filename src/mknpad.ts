@@ -57,9 +57,9 @@ let mknpad = {
 
 	io: {	// 汎用入出力関数
 		// テキストアクセス
-		print(dev: HTMLElement, str: string): void {
-			dev.textContent += str;
-		},
+		// print(dev: HTMLElement, str: string): void {
+		// 	dev.textContent += str;
+		// },
 		scan(dev: HTMLElement): string {
 			return dev.textContent;
 		},
@@ -819,17 +819,17 @@ let mknpad = {
 			},
 			log(str: string) {
 				const time = new Date();
-				mknpad.dev.err.innerHTML += `<span>[${time.toLocaleTimeString()}.${time.getMilliseconds()}]\t${str}</span>\n`;
+				mknpad.api.printErr(`[${time.toLocaleTimeString()}.${time.getMilliseconds()}]\t${str}\n`);
 				mknpad.system.console.scroll(mknpad.dev.err);
 			},
 			msg(str: string) {
 				const time = new Date();
-				mknpad.dev.err.innerHTML += `<span style="color: #4f4;">[${time.toLocaleTimeString()}.${time.getMilliseconds()}]\t${str}</span>\n`;
+				mknpad.api.printErr(`[${time.toLocaleTimeString()}.${time.getMilliseconds()}]\t${str}\n`, '#4f4');
 				mknpad.system.console.scroll(mknpad.dev.err);
 			},
 			error(str: string) {
 				const time = new Date();
-				mknpad.dev.err.innerHTML += `<span style="color: #f44;">[${time.toLocaleTimeString()}.${time.getMilliseconds()}]\t${str}</span>\n`;
+				mknpad.api.printErr(`[${time.toLocaleTimeString()}.${time.getMilliseconds()}]\t${str}\n`, '#f44');
 				mknpad.system.console.scroll(mknpad.dev.err);
 			},
 			showCode() {
