@@ -1,9 +1,9 @@
 "use strict";
 let mknpad = {
     const: {
-        version: '0.5.3.1',
-        versionString: 'PAD Editor Eryngii 3.1',
-        internalName: 'MKNPAD.5.3.1',
+        version: '0.5.3.2',
+        versionString: 'PAD Editor Eryngii 3.2',
+        internalName: 'MKNPAD.5.3.2',
         file: {
             extension: '.mknpad',
             type: 'application/x.mknpad+json',
