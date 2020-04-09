@@ -79,12 +79,8 @@ let mknpad = {
 		abort(str: string) {
 			throw ('mknpad.api.abort: ' + str);
 		},
-		printErr(str: string) {
-			mknpad.io.print(mknpad.dev.err, str);
-		},
-		printOut(str: string) {
-			mknpad.io.print(mknpad.dev.out, str);
-		},
+		printErr: undefined,
+		printOut: undefined,
 		padData() {
 			return mknpad.io.read(mknpad.dev.pad);
 		},
@@ -103,15 +99,23 @@ let mknpad = {
 				vars[array[0]] = array[1];    //先ほど確保したkeyに、値を代入。
 			}
 			return vars;
+		},
+		createPrinter(dev: HTMLElement) {
+			return function (str: string, color: string = 'unset', bgcolor: string = 'unset') {
+				return dev.innerHTML += `<span style="color: ${color}; backgroud-color: ${bgcolor}">${str}</span>`;
+			}
 		}
 	},
 
 	init: {
 		dev() {
-			mknpad.dev.err = document.getElementById('paderr');
+			mknpad.dev.err = document.querySelector('#paderr');
 			mknpad.io.clear(mknpad.dev.err);
-			mknpad.dev.out = document.getElementById('padout');
+			mknpad.api.printErr = mknpad.api.createPrinter(mknpad.dev.err);
+
+			mknpad.dev.out = document.querySelector('#padout');
 			mknpad.io.clear(mknpad.dev.out);
+			mknpad.api.printOut = mknpad.api.createPrinter(mknpad.dev.out);
 
 			mknpad.dev.pad = document.getElementById('pad');
 
