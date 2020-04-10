@@ -7,9 +7,9 @@ interface IMPREQBUF {
 let mknpad = {
 
 	const: {
-		version: '0.5.3.2',
-		versionString: 'PAD Editor Eryngii 3.2',
-		internalName: 'MKNPAD.5.3.2',
+		version: '0.5.3.3',
+		versionString: 'PAD Editor Eryngii 3.3',
+		internalName: 'MKNPAD.5.3.3',
 		file: {
 			extension: '.mknpad',
 			type: 'application/x.mknpad+json',
@@ -162,6 +162,7 @@ let mknpad = {
 			return false;
 		}
 	},
+
 	system: {
 		file: {
 			savePad(): boolean {
@@ -599,7 +600,7 @@ let mknpad = {
 					ClickedEmptyBlock.parentNode.insertBefore(document.createTextNode('\n'), ClickedEmptyBlock.nextSibling);
 
 					let ThenBlkBlk = document.createElement('div');
-					ThenBlkBlk.classList.add('BlkBlk');
+					ThenBlkBlk.classList.add('BlkBlk', 'Then');
 					ThenBlkBlk = NB.appendChild(ThenBlkBlk);
 
 					let ThenFlgBlk = document.createElement('div');
@@ -619,7 +620,7 @@ let mknpad = {
 					NB.appendChild(document.createElement('br'));
 
 					let ElseBlkBlk = document.createElement('div');
-					ElseBlkBlk.classList.add('BlkBlk');
+					ElseBlkBlk.classList.add('BlkBlk', 'Else');
 					ElseBlkBlk = NB.appendChild(ElseBlkBlk);
 
 					let ElseFlgBlk = document.createElement('div');
