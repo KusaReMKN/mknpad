@@ -42,9 +42,9 @@ class ArrayReader {
 let mknpad = {
 
 	const: {
-		version: '0.5.3.5',
-		versionString: 'PAD Editor Eryngii 3.5.',
-		internalName: 'MKNPAD.5.3.5',
+		version: '0.5.3.6',
+		versionString: 'PAD Editor Eryngii 3.6.',
+		internalName: 'MKNPAD.5.3.6',
 		file: {
 			extension: '.mknpad',
 			type: 'application/x.mknpad+json',
@@ -571,9 +571,13 @@ let mknpad = {
 			},
 			run() {
 				mknpad.system.console.log('Run: Start ...');
+				let strict = (document.getElementById('strict') as HTMLInputElement).checked;
+				if (strict) {
+					mknpad.system.console.msg('strict mode is invoked');
+				}
 				if (mknpad.system.pad.compile()) {
 					if (mknpad.var.padjs.length !== 0) {
-						mknpad.var.padjs = `"use strict";\ntry {\ndelete mknpad.boot;\n${mknpad.var.padjs}}\ncatch (e) {\nmknpad.dev.err.textContent += ("RUNTIME RERROR: " + e);\n}\n`;
+						mknpad.var.padjs = `${strict ? '"use strict";' : ''}\ntry {\ndelete mknpad.boot;\n${mknpad.var.padjs}}\ncatch (e) {\nmknpad.dev.err.textContent += ("RUNTIME RERROR: " + e);\n}\n`;
 					}
 					window.localStorage.setItem('padjs', mknpad.var.padjs);
 					mknpad.dev.run = window.open('./runtime/', mknpad.const.win.name, mknpad.const.win.option);
