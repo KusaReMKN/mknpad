@@ -4,12 +4,47 @@ interface IMPREQBUF {
 	[prop: string]: boolean,
 }
 
+class ArrayReader {
+	private buf: ArrayBuffer;
+	private pos: number;
+
+	public constructor(buf: ArrayBuffer) {
+		this.buf = buf.slice(0);
+		this.pos = 0;
+	}
+
+	public readByte() {
+		let data = new Uint8Array(this.buf.slice(this.pos), 0, 1);
+		this.pos += 1;
+		return Number(data[0]);
+	}
+	public readWord() {
+		let data = new Uint16Array(this.buf.slice(this.pos), 0, 1);
+		this.pos += 2;
+		return Number(data[0]);
+	}
+	public readDword() {
+		let data = new Uint32Array(this.buf.slice(this.pos), 0, 1);
+		this.pos += 4;
+		return Number(data[0]);
+	}
+	public readBuffer() {
+		return this.buf.slice(this.pos);
+	}
+	public getPosition() {
+		return this.pos;
+	}
+	public setPosition(pos: number) {
+		this.pos = pos;
+	}
+}
+
 let mknpad = {
 
 	const: {
-		version: '0.5.3.3',
-		versionString: 'PAD Editor Eryngii 3.3',
-		internalName: 'MKNPAD.5.3.3',
+		version: '0.5.3.5',
+		versionString: 'PAD Editor Eryngii 3.5.',
+		internalName: 'MKNPAD.5.3.5',
 		file: {
 			extension: '.mknpad',
 			type: 'application/x.mknpad+json',
@@ -22,6 +57,7 @@ let mknpad = {
 			cmdblk: 'CmdBlk',
 			blkblk: 'BlkBlk',
 			cmtblk: 'CmtBlk',
+			empblk: 'EmpBlk',
 		},
 		lib: {
 			path: './lib/',
@@ -35,7 +71,10 @@ let mknpad = {
 		win: {
 			name: 'MKNPADWIN',
 			option: `width=1080,height=720,dialog=yes,top=480,left=640`,
-		}
+		},
+		pad: {
+			default: '<div class="PADTitle">TEST</div><br><div class="BlkBlk Main" id="Main"><div class="FlgBlk Start">Start</div><br><div class="EmpBlk"></div><br><div class="FlgBlk End">End</div><br></div>',
+		},
 	},
 
 	var: {
@@ -231,6 +270,21 @@ let mknpad = {
 				});
 				input.click();
 			},
+			loadPadSim() {
+				let input = document.createElement('input');
+				input.type = 'file';
+				input.accept = ['.pad'].join();
+				input.addEventListener('input', function () {
+					let res = this.files[0];
+					let reader = new FileReader();
+					reader.addEventListener('load', () => {
+						mknpad.system.console.log(`Open: File (${res.name}) (${res.size} Bytes)`);
+						mknpad.system.pad.sim2mkn(reader.result as ArrayBuffer);
+					});
+					reader.readAsArrayBuffer(res);
+				});
+				input.click();
+			}
 		},
 		handler: {
 			atImportLoad() {
@@ -437,6 +491,67 @@ let mknpad = {
 							return false;
 					}
 				},
+				subConvert(buf: ArrayReader, blk: HTMLElement, name?: string): boolean {
+					const count = buf.readDword();
+					mknpad.system.console.log(`Block (${name}) has ${count} entities.`);
+					if (count > 100 && (!window.confirm(`The Block (${name}) has too many entities, or this is not a PAD Simulator file.\nAre you sure you want to continue the process?`))) {
+						mknpad.system.console.log(`Process Aborted.`);
+						return false;
+					}
+					for (let n = 0; n < count; n++) {
+						const emps = blk.getElementsByClassName(mknpad.const.blocks.empblk);
+						const type = buf.readWord();
+						for (let i = 0; i < 4; i++) { buf.readDword(); } /* 描写位置を読み飛ばす */
+						let len = buf.readByte();
+						if (len === 0xff) {
+							len = buf.readWord();
+						}
+						let cmdBuf = new Uint8Array(len);
+						for (let i = 0; i < len; i++) {
+							cmdBuf[i] = buf.readByte();
+						}
+						let decoder = new TextDecoder('sjis');
+						let cmd = decoder.decode(cmdBuf);
+						switch (type) {
+							case 0x01: /* normal */
+								mknpad.system.block.internal.createNormal(emps.item(emps.length - 1) as HTMLElement, cmd);
+								break;
+							case 0x02: /* if */
+								{
+									mknpad.system.block.internal.createIf(emps.item(emps.length - 1) as HTMLElement, cmd);
+									let ifs = blk.getElementsByClassName(mknpad.const.blocks.ifblk);
+									mknpad.system.pad.internal.subConvert(buf, ifs.item(ifs.length - 1).nextElementSibling.querySelector('.Then'), `IF (${cmd}) THEN`);
+									mknpad.system.pad.internal.subConvert(buf, ifs.item(ifs.length - 1).nextElementSibling.querySelector('.Else'), `IF (${cmd}) ELSE`);
+								}
+								break;
+							case 0x03: /* while */
+								{
+									mknpad.system.block.internal.createWhile(emps.item(emps.length - 1) as HTMLElement, cmd);
+									let whls = blk.getElementsByClassName(mknpad.const.blocks.whlblk);
+									mknpad.system.pad.internal.subConvert(buf, whls.item(whls.length - 1).nextElementSibling as HTMLElement, `WHILE (${cmd})`);
+								}
+								break;
+							case 0x04: /* until */
+								{
+									mknpad.system.block.internal.createUntil(emps.item(emps.length - 1) as HTMLElement, cmd);
+									let dows = blk.getElementsByClassName(mknpad.const.blocks.dowblk);
+									mknpad.system.pad.internal.subConvert(buf, dows.item(dows.length - 1).nextElementSibling as HTMLElement, `UNTIL (${cmd})`);
+								}
+								break;
+							case 0x05: /* output */
+								mknpad.system.block.internal.createNormal(emps.item(emps.length - 1) as HTMLElement, `print(${cmd})`);
+								break;
+							case 0x06: /* input */
+								mknpad.system.block.internal.createNormal(emps.item(emps.length - 1) as HTMLElement, `scan(${cmd})`);
+								break;
+							default:
+								mknpad.system.console.error(`Unknown Entity Type (${type.toString(16)}h)`);
+								return false;
+						}
+					}
+					mknpad.system.block.update();
+					return true;
+				}
 			},
 			compile() {
 				mknpad.system.console.log('Compile: Starting ...');
@@ -472,7 +587,18 @@ let mknpad = {
 			},
 			stop() {
 				mknpad.dev.run && mknpad.dev.run.close();
-			}
+			},
+			sim2mkn(buf: ArrayBuffer) {
+				mknpad.system.console.log('Converting from PAD Simulator ...');
+				mknpad.dev.pad.innerHTML = mknpad.const.pad.default;
+				let reader = new ArrayReader(buf);
+				if (mknpad.system.pad.internal.subConvert(reader, mknpad.dev.pad.querySelector('.Main'), 'Main') && reader.getPosition() === buf.byteLength) {
+					mknpad.system.console.log('Conversion Completed.');
+					return true;
+				}
+				mknpad.system.console.log('Conversion Failed.');
+				return false;
+			},
 		},
 		block: {
 			internal: {
