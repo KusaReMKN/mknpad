@@ -95,10 +95,6 @@ let mknpad = {
 	},
 
 	io: {	// 汎用入出力関数
-		// テキストアクセス
-		// print(dev: HTMLElement, str: string): void {
-		// 	dev.textContent += str;
-		// },
 		scan(dev: HTMLElement): string {
 			return dev.textContent;
 		},
@@ -110,7 +106,7 @@ let mknpad = {
 			dev.innerHTML = decodeURIComponent(window.atob(base64));
 		},
 		read(dev: HTMLElement): string {
-			return window.btoa(encodeURIComponent(dev.innerHTML))
+			return window.btoa(encodeURIComponent(dev.innerHTML));
 		},
 	},
 
@@ -118,8 +114,8 @@ let mknpad = {
 		abort(str: string) {
 			throw ('mknpad.api.abort: ' + str);
 		},
-		printErr: undefined,
-		printOut: undefined,
+		printErr: undefined as (str: string, color?: string, bgcolor?: string) => string,
+		printOut: undefined as (str: string, color?: string, bgcolor?: string) => string,
 		padData() {
 			return mknpad.io.read(mknpad.dev.pad);
 		},
@@ -140,9 +136,7 @@ let mknpad = {
 			return vars;
 		},
 		createPrinter(dev: HTMLElement) {
-			return function (str: string, color: string = 'unset', bgcolor: string = 'unset') {
-				return dev.innerHTML += `<span style="color: ${color}; background-color: ${bgcolor}">${str}</span>`;
-			}
+			return (str: string, color: string = 'unset', bgcolor: string = 'unset') => dev.innerHTML += `<span style="color: ${color}; background-color: ${bgcolor}">${str}</span>`;
 		}
 	},
 
@@ -640,7 +634,7 @@ let mknpad = {
 										PrevBr.parentNode.removeChild(PrevBr);
 										DoubleBrTag = false;
 									} else {
-										PrevBr = AllTags[j]
+										PrevBr = AllTags[j];
 										DoubleBrTag = true;
 									}
 								}
